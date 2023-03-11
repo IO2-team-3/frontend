@@ -1,0 +1,215 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --black-gradient: linear-gradient(
+    144.39deg,
+    #ffffff -278.56%,
+    #6d6d6d -78.47%,
+    #11101d 91.61%
+  );
+  --card-shadow: 0px 20px 100px -10px rgba(66, 71, 91, 0.1);
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+.text-gradient {
+  background: radial-gradient(
+    64.18% 64.18% at 71.16% 35.69%,
+    #def9fa 0.89%,
+    #bef3f5 17.23%,
+    #9dedf0 42.04%,
+    #7de7eb 55.12%,
+    #5ce1e6 71.54%,
+    #33bbcf 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.bg-black-gradient {
+  background: linear-gradient(
+    144.39deg,
+    #ffffff -278.56%,
+    #6d6d6d -78.47%,
+    #11101d 91.61%
+  );
+}
+
+.sidebar {
+  -webkit-animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@-webkit-keyframes slide-top {
+  0% {
+    -webkit-transform: translateY(100px);
+    transform: translateY(100px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-top {
+  0% {
+    -webkit-transform: translateY(100px);
+    transform: translateY(100px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+.navbar-element:hover{
+  transform: scale(1.2);
+}
+
+.swiper-slide{
+  width: 20rem;
+  height: 25rem;
+  border-radius: 1rem;
+  object-fit: cover;
+  align-items: center;
+}
+
+.swiper-slide:hover{
+  background: linear-gradient(
+    153.47deg,
+    rgba(255, 255, 255, 0.4) 20.00%,
+    #14101d 90.00%
+  );
+}
+
+@media (max-width: 990px) {
+  .slider-controler .slide-photo{
+    left: 70% !important;
+    transform: translateX(-70%) !important;
+  }
+}
+
+@media (max-width: 450px) {
+  .slider-controler .slide-photo{
+    left: 80% !important;
+    transform: translateX(-80%) !important;
+  }
+}
+
+.slide-photo{
+  width: 18rem;
+  height: 13rem;
+  border-radius: 4rem;
+}
+
+.link-effect {
+  transform: translate(-50%,-50%);
+  color: #def9fa;
+  background-image: linear-gradient(rgba(230,230, 230, 0.5), rgba(230,230, 230, 0.8));
+  background-size: 100% 10px;
+  background-repeat: no-repeat;
+  background-position: 100% 0%;
+   transition: background-size .7s, background-position .5s ease-in-out;
+}
+
+.link-effect:hover {
+  background-size: 100% 100%;
+  background-position: 0% 100%;
+  transition: background-position .7s, background-size .5s ease-in-out;
+}
+
+.reflection{
+  color: white;
+  -webkit-box-reflect: below 0px linear-gradient(transparent, rgba(255, 255, 255, 0.5));
+}
+
+.text-animation{
+  animation: fadeIn 3s forwards;
+  opacity: 0;
+  transition-timing-function: cubic-brezier(0.785, 0.135, 0.15, 0.86);
+}
+
+.first-text-animation-period{
+  font-weight: 500;
+  display: inline-block;
+  animation: firstperiod 3s forwards cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  z-index: 1;
+}
+
+.animation-slide{
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.second-text-animation-period{
+  font-weight: 100;
+  z-index: -1;
+  display: inline-block;
+  animation: secondperiod 3s forwards cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+@keyframes fadeIn{
+  0%{
+    opacity: 0;
+    transform: scale(1);
+  }
+  50%{
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100%{
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes firstperiod{
+  0%{
+    transform: translateX(50%);
+  }
+  60%{
+    transform: translateX(100%);
+  }
+  100%{
+    transform: translateX(0%);
+  }
+}
+
+@keyframes secondperiod{
+  0%{
+    transform: translateX(200%);
+  }
+  60%{
+    transform: translateX(100%);
+  }
+  100%{
+    transform: translateX(0%);
+  }
+}
+
+.background-wrapper {
+  animation: scroll 70s linear infinite;
+  background: url('./assets/background.jpg');
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+}
+
+@keyframes scroll {
+  100%{
+   background-position:0px -3000px;
+ }
+}
+
+@media (prefers-reduced-motion) {
+ .wrapper {
+   animation: scroll 200s linear infinite;
+ }
+}
