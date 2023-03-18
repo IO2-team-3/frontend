@@ -116,19 +116,19 @@ export const footerLinks = [
     links: [
       {
         name: "How it Works",
-        link: "",
+        link: "/",
       },
       {
         name: "Create event",
-        link: "",
+        link: "/my_events",
       },
       {
-        name: "My event",
-        link: "",
+        name: "My events",
+        link: "/my_events",
       },
       {
         name: "Terms & Services",
-        link: "",
+        link: "/",
       },
     ],
   },
@@ -137,15 +137,15 @@ export const footerLinks = [
     links: [
       {
         name: "Help Center",
-        link: "",
+        link: "/",
       },
       {
         name: "Partners",
-        link: "",
+        link: "/",
       },
       {
         name: "Newsletters",
-        link: "",
+        link: "/",
       },
     ],
   },
