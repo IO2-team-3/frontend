@@ -72,10 +72,10 @@ const CreateEvent = () => {
                 </div>
 
                 <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <input type="file"
+                    <textarea type="text"
                         placeholder="Place schema"
-                        className="text-black bg-white items-center p-3 rounded-3xl md:w-7/12 w-3/4 h-full input-text-effect">
-                    </input>
+                        className="text-black bg-white items-center p-3 rounded-3xl md:w-7/12 w-3/4 h-20 input-text-effect">
+                    </textarea>
                 </div>
 
                 <div className={`${toggle ? " " : "hidden"} text-center my-10 float-right`}>

@@ -26,10 +26,18 @@ function EventComponent(event, eventToggle, setEventToggle){
 
   return (
     <div id={event.id} className="bg-white p-3 w-full rounded-3xl cursor-pointer hover-effect-light text-cyan-400 hover:text-white 
-      space-y-6" onClick={() => setEventToggle(event.id)}>
+      space-y-6" onClick={() => {
+        if(eventToggle === event.id) setEventToggle(null)
+        else setEventToggle(event.id)
+        }}>
+
       <span className="md:text-2xl text-xs font-bold">{event.title}</span>
-      <span><FontAwesomeIcon icon={faTrash} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12"></FontAwesomeIcon></span>
-      <span><FontAwesomeIcon icon={faPenToSquare} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12"></FontAwesomeIcon></span>
+      <span>
+        <FontAwesomeIcon icon={faTrash} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12 hover:text-red-600"></FontAwesomeIcon>
+      </span>
+      <span>
+        <FontAwesomeIcon icon={faPenToSquare} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12 hover:text-gray-500"></FontAwesomeIcon>
+      </span>
       <div className={`${eventToggle === event.id ? null : "hidden"}`}>
 
         <div className="text-black md:text-sm text-xs items-stretch">
@@ -86,7 +94,7 @@ const Events = () => {
   //
 
   const [toggle, setToggle] = useState(false);
-  const [eventToggle, setEventToggle] = useState("");
+  const [eventToggle, setEventToggle] = useState(null);
 
   return (
     <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-6`}>
