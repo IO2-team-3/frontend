@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 
 const App = () => (
 
-  <div className="background-wrapper w-full overflow-hidden bg-black-gradient ">
+  <div className="background-wrapper w-full overflow-hidden">
 
     <div className={`${styles.paddingX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidth}`}>

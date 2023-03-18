@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import { close, menu, logo } from "../assets";
 import { navLinks } from "../constants";
@@ -7,20 +8,20 @@ import { navLinks } from "../constants";
 import 'font-awesome/css/font-awesome.min.css';
 
 const Navbar = () => {
-    const [active, setActive] = useState("Home");
+
     const [toggle, setToggle] = useState(false);
 
     return (
         <nav className="w-full flex w-full justify-between items-center navbar">
 
             <div className="p-3">
-                <a href={'home'}>
+                <Link to='/'>
                     <img
                         src={logo}
                         alt="EventWave"
                         className="w-[300px] h-[100px] object-contain hover:w-[320px] h-[120px]"
                     />
-                </a>
+                </Link>
             </div>
 
 
@@ -29,11 +30,10 @@ const Navbar = () => {
                     <li
                         key={nav.id}
                         className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 
-                            ${active === nav.title ? "text-white" : "text-dimWhite"} 
+                            ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
                             ${index === navLinks.length - 1 ? "mr-0" : "mr-10"}`}
-                        onClick={() => setActive(nav.title)}
                     >
-                        <a href={`./#${nav.id}`}><i className={nav.icon}/> {nav.title}</a>
+                        <Link to={nav.link}><i className={nav.icon} /> {nav.title}</Link>
                     </li>
                 ))}
             </ul>
@@ -54,11 +54,11 @@ const Navbar = () => {
                         {navLinks.map((nav, index) => (
                             <li
                                 key={nav.id}
-                                className={`font-poppins font-medium cursor-pointer text-[16px] ${active === nav.title ? "text-white" : "text-dimWhite"
-                                    } ${index === navLinks.length - 1 ? "mb-0" : "mb-4"}`}
-                                onClick={() => setActive(nav.title)}
+                                className={`font-poppins font-medium cursor-pointer text-[16px] 
+                                ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
+                                ${index === navLinks.length - 1 ? "mb-0" : "mb-4"}`}
                             >
-                                <a href={`./#${nav.id}`}><i className={nav.icon}/> {nav.title}</a>
+                                <Link to={nav.link}><i className={nav.icon}/> {nav.title}</Link>
                             </li>
                         ))}
                     </ul>

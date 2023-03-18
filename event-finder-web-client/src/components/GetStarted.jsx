@@ -1,6 +1,7 @@
 import React from 'react'
 import { mainPageAnimationText } from '../constants';
 
+// Have to change <a href = "./register"/> to Link 
 const GetStarted = () =>{
 
     return (
@@ -16,7 +17,7 @@ const GetStarted = () =>{
             <div className="float-right lg:my-6 my-20 p-10">
                 <a>
                     <div className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg">
-                        <a href="./register">Get started</a>
+                        <a href="./register">Get started</a> 
                     </div>
                 </a>
             </div>
