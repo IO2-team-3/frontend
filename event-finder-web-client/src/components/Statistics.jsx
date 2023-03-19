@@ -1,10 +1,11 @@
+import React from "react";
+
 import { statistics } from "../constants";
 import styles from "../style";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 
 const Statistics = () => (
-  <section className={`${styles.flexCenter} flex-row flex-wrap sm:mb-20 mb-6 space-x-20`}>
+  <section className={`${styles.flexCenter} flex-row flex-wrap sm:mb-20 mb-6 space-x-20 md:my-6`}>
     {statistics.map((stat) => (
       <div key={stat.id} className={`${styles.flexCenter} items-center m-3`} >
         <span className={`font-poppins font-semibold xs:text-[40px] text-[30px] xs:leading-[53px] leading-[43px] text-white text-center`}>

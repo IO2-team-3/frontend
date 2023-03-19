@@ -3,6 +3,10 @@ import { bussiness_meeting, concert, event, student, stadium, orchestra, tickets
 import { faUsers } from '@fortawesome/free-solid-svg-icons'
 import { faBriefcase } from '@fortawesome/free-solid-svg-icons'
 import { faIdCard } from '@fortawesome/free-solid-svg-icons'
+import { faForward } from "@fortawesome/free-solid-svg-icons";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faRectangleXmark } from "@fortawesome/free-solid-svg-icons";
 
 export const appName = "EventWave";
 
@@ -11,16 +15,19 @@ export const navLinks = [
     id: "home",
     title: "Home",
     icon: "fa fa-home",
+    link: "/",
   },
   {
     id: "my_events",
     title: "My events",
     icon: "fa fa-book",
+    link: "/my_events",
   },
   {
     id: "log_in",
     title: "Log in",
     icon: "fa fa-solid fa-user",
+    link: "/log_in",
   },
 ];
 
@@ -109,19 +116,19 @@ export const footerLinks = [
     links: [
       {
         name: "How it Works",
-        link: "",
+        link: "/",
       },
       {
         name: "Create event",
-        link: "",
+        link: "/my_events",
       },
       {
-        name: "My event",
-        link: "",
+        name: "My events",
+        link: "/my_events",
       },
       {
         name: "Terms & Services",
-        link: "",
+        link: "/",
       },
     ],
   },
@@ -130,15 +137,15 @@ export const footerLinks = [
     links: [
       {
         name: "Help Center",
-        link: "",
+        link: "/",
       },
       {
         name: "Partners",
-        link: "",
+        link: "/",
       },
       {
         name: "Newsletters",
-        link: "",
+        link: "/",
       },
     ],
   },
@@ -166,3 +173,8 @@ export const socialMedia = [
     link: "https://www.linkedin.com/",
   },
 ];
+
+export const inFutureIcon = faForward
+export const pendingIcon = faCircle
+export const doneIcon = faCircleCheck
+export const cancelledIcon = faRectangleXmark

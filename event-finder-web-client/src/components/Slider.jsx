@@ -1,3 +1,4 @@
+import React from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';
@@ -28,7 +29,7 @@ const Slider = () => {
         centeredSlides={true}
         coverflowEffect={{
             rotate: 20,
-            stretch: 110, 
+            stretch: 145, 
             depth: 150, 
             modifier: 1,
           }}
