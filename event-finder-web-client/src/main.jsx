@@ -7,7 +7,7 @@ import App from './App'
 import MyEvents from './pages/MyEvents'
 import LogIn from './pages/LogIn'
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <App/>

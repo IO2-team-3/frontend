@@ -1,6 +1,7 @@
+import React from "react";
+
 import { statistics } from "../constants";
 import styles from "../style";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 
 const Statistics = () => (

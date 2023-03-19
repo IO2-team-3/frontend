@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { router } from "../main"
 import { Link } from "react-router-dom";
 
 import { close, menu, logo } from "../assets";
@@ -58,7 +59,7 @@ const Navbar = () => {
                                 ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
                                 ${index === navLinks.length - 1 ? "mb-0" : "mb-4"}`}
                             >
-                                <Link to={nav.link}><i className={nav.icon}/> {nav.title}</Link>
+                                <Link to={nav.link}><i className={nav.icon} /> {nav.title}</Link>
                             </li>
                         ))}
                     </ul>

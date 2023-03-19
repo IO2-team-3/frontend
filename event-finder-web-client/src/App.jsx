@@ -1,4 +1,5 @@
 import React from 'react'
+import { BrowserRouter } from 'react-router-dom'
 import styles from './style'
 import Navbar from './components/Navbar';
 import Slider from './components/Slider';
@@ -41,7 +42,6 @@ const App = () => (
       </div>
     </div>
   </div>
-
 );
 
 export default App;
