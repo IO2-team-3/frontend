@@ -1,0 +1,60 @@
+.form-input:focus{
+    outline: 3px solid  lightseagreen;
+}
+.form-input{
+    background-color: black;
+}
+.form-control{
+    display: block;
+    color: white;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+label{
+    color: white;
+}
+
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:focus{
+    -webkit-text-fill-color: white;
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+.form-control[data-autocompleted]{
+    background-color: transparent !important;
+}
+.form-button{
+    background-color: peru;
+    color: white;
+    margin-top: 30px;
+    /*transition: background-color 1ms;*/
+}
+.form-button:hover{
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+}
+
+.register-button{
+    background-color: transparent;
+    border: 1px solid  peru;
+    color:peru;
+    margin-top: 10px;
+    width: 100%;
+}
+/*#0d98ba  #3386FF*/
+.register-button:hover{
+    background-color: peru;
+    color: white;
+}
+.log-container,register-container {
+    padding: 16px;
+    align-items: center;
+    margin-bottom: 30px;
+    border: 1px solid #21262d;
+}
+.container{
+    width: 50%;
+    margin: auto;
+}
+.register-info{
+    color: white;
+}

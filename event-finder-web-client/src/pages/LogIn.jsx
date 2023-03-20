@@ -2,6 +2,8 @@ import React from 'react'
 import styles from '../style'
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import LogBox from "../components/LogBox.jsx";
+import RegisterBox from "../components/RegisterBox.jsx";
 
 const LogIn = () => (
 
@@ -12,7 +14,12 @@ const LogIn = () => (
         <Navbar />
       </div>
     </div>
-
+      <div className={`${styles.paddingX} ${styles.flexCenter}`}>
+          <div className={`${styles.boxWidth} container`}>
+            <LogBox/>
+            <RegisterBox/>
+          </div>
+      </div>
     <div className={`${styles.paddingX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidth}`}>
         <Footer />
