@@ -1,4 +1,5 @@
 import React from 'react'
+import { BrowserRouter } from 'react-router-dom'
 import styles from './style'
 import Navbar from './components/Navbar';
 import Slider from './components/Slider';
@@ -8,7 +9,7 @@ import Footer from './components/Footer';
 
 const App = () => (
 
-  <div className="background-wrapper w-full overflow-hidden bg-black-gradient ">
+  <div className="background-wrapper w-full overflow-hidden">
 
     <div className={`${styles.paddingX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidth}`}>
@@ -41,7 +42,6 @@ const App = () => (
       </div>
     </div>
   </div>
-
 );
 
 export default App;

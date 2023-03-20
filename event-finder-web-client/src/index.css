@@ -43,6 +43,10 @@
   );
 }
 
+.bg-white-transparent {
+  background: rgba(70, 70, 70, 0.2)
+}
+
 .sidebar {
   -webkit-animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
@@ -213,3 +217,56 @@
    animation: scroll 200s linear infinite;
  }
 }
+
+.title-shadow {
+  text-shadow: 1px 1px 0 cyan, 1px 2px 0 cyan, 1px 3px 0 cyan, 1px 4px 0 #0d98ba,
+    1px 5px 0 #0d98ba, 1px 6px 0 #0d98ba, 1px 7px 0 #0d98ba, 1px 8px 0 #0d98ba,
+    5px 13px 15px #0d98ba;
+}
+
+.input-text-effect:hover{
+  background: linear-gradient(to top, #c4c5c7 0%, #dcdddf 52%, #ebebeb 100%);
+}
+
+.input-text-effect:focus{
+  background: black;
+  color: white;
+  border-weight: 10px;
+}
+
+.hover-effect:hover{
+  background: linear-gradient(
+    153.47deg,
+    rgba(255, 255, 255, 0.4) 20.00%,
+    #14101d 90.00%
+  );
+}
+
+.hover-effect-light{
+  transition: background-color 2s linear;
+}
+
+.hover-effect-light::after{
+  transition: transform 0.5s ease-in 0.5s;
+  -webkit-transition: all 0.3s ease 0s; 
+  transform-origin: 0.0;
+  transition-timing-function: cubic-bezier(0.7, 1.2, 0.5, 0.8);
+  transform: scaleX(0);
+}
+
+.hover-effect-light:hover {
+  background: radial-gradient(
+    64.18% 64.18% at 71.16% 35.69%,
+    #def9fa 0.89%,
+    #bef3f5 17.23%,
+    #9dedf0 42.04%,
+    #7de7eb 55.12%,
+    #5ce1e6 71.54%,
+    #33bbcf 100%
+  );
+}
+
+.hover-effect-light:hover::after{
+  transformX: scaleX(1);
+}
+
