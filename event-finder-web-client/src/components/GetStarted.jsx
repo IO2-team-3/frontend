@@ -17,7 +17,7 @@ const GetStarted = () =>{
             <div className="float-right lg:my-6 my-20 p-10">
                 <a>
                     <div className="link-effect text-lg md:text-3xl font-bold cursor-pointer border-2 border-solid p-3 rounded-lg 
-                        uppercase">
+                        uppercase shadow-md shadow-slate-100">
                         Get started
                     </div>
                 </a>
