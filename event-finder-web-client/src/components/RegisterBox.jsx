@@ -1,16 +1,19 @@
 import React, {useState} from "react";
 import "../style.css";
 import RegisterForm from "./RegisterForm.jsx";
-const RegisterBox = () => {
-    const [showForm, setShowForm] = useState(false);
+const RegisterBox = (props) => {
+
+    const handleClick = () => {
+        props.switch(true)
+    }
 
     return(
         <div className="register-container bg-white-transparent rounded-3xl p-5">
-            <p style={{marginBottom:'15px'}} className="register-info">New to <span style={{color:'peru'}}>EventWave</span>?</p>
+            <p style={{marginBottom:'15px'}} className="info">New to <span style={{color:'peru'}}>EventWave</span>?</p>
             {
-                showForm ? <RegisterForm/>
-                    :<button className="register-button p-3 rounded-3xl md:w-7/12 w-3/4"
-                            onClick={()=>setShowForm(true)}>Register</button>
+                props.isNR ? <RegisterForm/>
+                    :<button className="switch-button p-3 rounded-3xl md:w-7/12 w-3/4"
+                            onClick={handleClick}>Register</button>
             }
         </div>
     )

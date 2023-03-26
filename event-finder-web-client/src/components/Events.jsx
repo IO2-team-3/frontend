@@ -10,7 +10,7 @@ import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faHourglassStart } from "@fortawesome/free-solid-svg-icons";
 import { faHourglassEnd } from "@fortawesome/free-solid-svg-icons";
 import { cancelledIcon, inFutureIcon, pendingIcon, doneIcon} from "../constants";
-
+import {useNavigate} from "react-router-dom";
 // Event class
 function Event(id, title, startTime, endTime, name, placeSchema, status, categories){
   this.id = id;
@@ -23,7 +23,7 @@ function Event(id, title, startTime, endTime, name, placeSchema, status, categor
   this.categories = categories;
 }
 
-function EventComponent(event, eventToggle, setEventToggle){
+function EventComponent(event, eventToggle, setEventToggle,navigate){
 
   return (
     <div key={event.id} className="bg-white p-3 w-full rounded-3xl cursor-pointer hover-effect-light text-cyan-400 hover:text-white 
@@ -36,7 +36,7 @@ function EventComponent(event, eventToggle, setEventToggle){
       <span>
         <FontAwesomeIcon icon={faTrash} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12 hover:text-red-600"></FontAwesomeIcon>
       </span>
-      <span>
+      <span onClick={()=>{navigate('/event_details')}}>
         <FontAwesomeIcon icon={faPenToSquare} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12 hover:text-gray-500"></FontAwesomeIcon>
       </span>
       <div className={`${eventToggle === event.id ? null : "hidden"}`}>
@@ -81,7 +81,7 @@ function EventComponent(event, eventToggle, setEventToggle){
 }
 
 const Events = () => {
-
+  const navigate = useNavigate();
   //Hardcoded data (to delete)
   const events = [
     new Event("1", "Rock Concert", "19-08-2023 19:00", "20-08-2023 1:00", "Huge rock'n roll concert with a lot of popular musicians and bands", "xxx", "pending", [{id: "1", category: "music"}, {id: "2", category: "concert"}]),
@@ -117,7 +117,7 @@ const Events = () => {
         </div>
 
         <div className={`${!toggle ? "hidden" : ""} space-y-10 p-8 items-center`}>
-          {events.map((event) => EventComponent(event, eventToggle, setEventToggle))}
+          {events.map((event) => EventComponent(event, eventToggle, setEventToggle,navigate))}
         </div>
 
       </div>
