@@ -5,87 +5,293 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 const CreateEvent = () => {
 
+    const initialValues = {
+        title: "", freePlaces: "", startTime: "", 
+        endTime: "", categories: "", description: "", 
+        placesScheme: "", latitude: "", longitude: ""
+    }
+    const initialErrors = {
+        title: "", freePlaces: "", startTime: "", 
+        endTime: "", categories: "", description: "", 
+        placesScheme: "", latitude: "", longitude: ""
+    }
+    const [formValues, setFormValues] = useState(initialValues);
+    const [formErrors, setFormErrors] = useState(initialErrors);
     const [toggle, setToggle] = useState(false);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormValues({ ...formValues, [name]: value });
+       
+        if(name === "title"){
+            if(value === "") setFormErrors({ ...formErrors, [name]: "Event title is required!" });
+            else setFormErrors({ ...formErrors, [name]: "" });
+        }
+        if(name === "freePlaces"){
+            if(value === "") setFormErrors({ ...formErrors, [name]: "Number of free places is required!" });
+            else setFormErrors({ ...formErrors, [name]: "" });
+        }
+        if(name === "startTime"){
+            var startDate = new Date(value);
+            var endDate = new Date(formValues.endTime);
+            if(value === "") setFormErrors({ ...formErrors, [name]: "Start time is required!" });
+            else if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The start of event should be earlier than the end!" });
+            else setFormErrors({ ...formErrors, [name]: "", ["endTime"]: "" });
+        }
+        if(name === "endTime"){
+            var startDate = new Date(formValues.startTime);
+            var endDate = new Date(value);
+            if(value === "") setFormErrors({ ...formErrors, [name]: "End time is required!" });
+            else if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The end of event should be later than the beginning!" });
+            else setFormErrors({ ...formErrors, [name]: "",  ["startTime"]: "" });
+        }
+        if(name === "categories"){
+            if(value === "") setFormErrors({ ...formErrors, [name]: "Categories are required!" });
+            else if(!value.match(/[^,]+/)) setFormErrors({ ...formErrors, [name]: "Categories should be in format CategoryA,CategoryB,..." });
+            else setFormErrors({ ...formErrors, [name]: "" });
+        }
+        if(name === "placesScheme"){
+            if(value === "") setFormErrors({ ...formErrors, [name]: "Places scheme is required!" });
+            else setFormErrors({ ...formErrors, [name]: "" });
+        }
+        if(name === "latitude"){
+            if(value === "") setFormErrors({ ...formErrors, [name]: "Latitude is required!" });
+            else setFormErrors({ ...formErrors, [name]: "" });
+        }
+        if(name === "longitude"){
+            if(value === "") setFormErrors({ ...formErrors, [name]: "Longitude is required!" });
+            else setFormErrors({ ...formErrors, [name]: "" });
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        setIsSubmit(true);
+        setToggle(false);
+    }
 
     return (
         <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-15`}>
-            <div className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`} 
+            <form className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`} 
                 onClick={() => {if(!toggle) setToggle(!toggle)}}>
 
                 <div className={`${toggle ? "none" : "hidden"}`}>
-                    <div onClick={() => setToggle(!toggle)}>
-                        <FontAwesomeIcon icon={faArrowRotateLeft} className="md:text-5xl text-3xl text-white cursor-pointer"></FontAwesomeIcon>
-                    </div>
+                    <FontAwesomeIcon 
+                        icon={faArrowRotateLeft}
+                        className="md:text-5xl text-3xl text-white cursor-pointer"
+                        onClick={() => setToggle(!toggle)}>
+                    </FontAwesomeIcon>
                 </div>
 
-                <div className={`${!toggle ? "none" : "text-center py-10"} md:text-5xl text-2xl title-shadow font-bold text-white `} 
-                    onClick={() => setToggle(!toggle)}>
+                <div className={`${!toggle ? "none" : "text-center py-10"} md:text-5xl text-2xl title-shadow font-bold text-white `}>
                     New event
                     <span className={`${!toggle ? "none" : "hidden"} md:text-6xl text-3xl float-right cursor-pointer mr-10`}>
                         <FontAwesomeIcon icon={faCirclePlus}></FontAwesomeIcon>
                     </span>
                 </div>
 
-                <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <input type="text"
-                        placeholder="Event title"
-                        className="text-black p-3 rounded-3xl md:w-7/12 w-3/4 input-text-effect">
-                    </input>
-                </div>
-
-                <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <input type="number"
-                        placeholder="Number of free places"
-                        className="text-black p-3 rounded-3xl md:w-7/12 w-3/4 input-text-effect"
-                        min="0">
-                    </input>
-                </div>
-
-                <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <input type="datetime-local"
-                        placeholder="End time"
-                        className="text-black p-3 rounded-3xl md:w-7/12 w-3/4 input-text-effect">
-                    </input>
-                </div>
-
-                <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <input type="datetime-local"
-                        placeholder="End time"
-                        className="text-black p-3 rounded-3xl md:w-7/12 w-3/4 input-text-effect">
-                    </input>
-                </div>
-
-                <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <input type="text"
-                        placeholder="Categories"
-                        className="text-black p-3 rounded-3xl md:w-7/12 w-3/4 h-full input-text-effect">
-                    </input>
-                </div>
-
-                <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <textarea type="text"
-                        placeholder="Description"
-                        className="text-black p-3 rounded-3xl md:w-7/12 w-3/4 input-text-effect h-40 text-start">
-                    </textarea>
-                </div>
-
-                <div className={`${toggle ? "none" : "hidden"} text-center my-10`}>
-                    <textarea type="text"
-                        placeholder="Place schema"
-                        className="text-black bg-white items-center p-3 rounded-3xl md:w-7/12 w-3/4 h-20 input-text-effect">
-                    </textarea>
-                </div>
-
-                <div className={`${toggle ? " " : "hidden"} text-center my-10 float-right`}>
-                    <div className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg">
-                        Create
+                <div className={`${toggle ? "none" : "hidden"} mt-10`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="title"
+                            type="text"
+                            placeholder="Enter your event title . . ."
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.title}
+                            onChange={handleChange}
+                            required
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Event title
+                        </label>
+                        {formErrors.title != "" ? 
+                        <p className="text-red-400 left-5"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.title}</p> : null}
                     </div>
                 </div>
 
-            </div>
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="freePlaces"
+                            type="number"
+                            placeholder="Number of free places . . ."
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.freePlaces}
+                            onChange={handleChange}
+                            required
+                            min="1"
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Free places
+                        </label>
+                        {formErrors.freePlaces != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.freePlaces}</p> : null}
+                    </div>
+                </div>
+
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="startTime"
+                            type="datetime-local"
+                            placeholder="Start time"
+                            className="text-gray-400 p-4 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.startTime}
+                            onChange={handleChange}
+                            max="2030-01-01T00:00"
+                            required
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Start time
+                        </label>
+                        {formErrors.startTime != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.startTime}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="endTime"
+                            type="datetime-local"
+                            placeholder="End time"
+                            className="text-gray-400 p-4 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.endTime}
+                            onChange={handleChange}
+                            min={formValues.startTime}
+                            max="2030-01-01T00:00"
+                            required
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            End time
+                        </label>
+                        {formErrors.endTime != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.endTime}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input
+                            name="categories" 
+                            type="text"
+                            placeholder="e.g. Sport, Music, Bussines . . ."
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.categories}
+                            onChange={handleChange}
+                            required
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Categories
+                        </label>
+                        {formErrors.categories != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.categories}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <textarea
+                            name="description" 
+                            type="text"
+                            placeholder="Briefly describe your event . . ."
+                            className="text-white p-4 rounded-3xl w-full input-text-effect form-input h-60 text-start input-border"
+                            maxLength="300"
+                            value={formValues.description}
+                            onChange={handleChange}
+                        >
+                        </textarea>
+                        <label className="relative text-sm placeholder-textarea rounded-full py-0 bg-black px-3">
+                            Description
+                        </label>
+                        {formErrors.description != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.description}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="placesScheme"
+                            type="text"
+                            placeholder="Provide places scheme . . ."
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.placesScheme}
+                            onChange={handleChange}
+                            required
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Places scheme
+                        </label>
+                        {formErrors.placesScheme != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.placesScheme}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="latitude"
+                            type="number"
+                            placeholder="Enter the latitude of the event location e.g. 20.5000"
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.latitude}
+                            onChange={handleChange}
+                            step="any"
+                            min="-90"
+                            max="90"
+                            required
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Latitude
+                        </label>
+                        {formErrors.latitude != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.latitude}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="longitude"
+                            type="number"
+                            placeholder="Enter the longitude of the event location e.g. 20.5000"
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.longitude}
+                            onChange={handleChange}
+                            step="any"
+                            min="-180"
+                            max="180"
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Longitude
+                        </label>
+                        {formErrors.longitude != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.longitude}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? " " : "hidden"} text-center my-10 float-right`}>
+                    <button className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg 
+                    shadow-md shadow-slate-100"
+                    onClick={handleSubmit}>
+                        Create
+                    </button>
+                </div>
+
+            </form>
         </section>
     );
 };
