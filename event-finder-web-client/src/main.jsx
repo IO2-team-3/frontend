@@ -6,6 +6,7 @@ import { createBrowserRouter,  RouterProvider, Route} from 'react-router-dom'
 import App from './App'
 import MyEvents from './pages/MyEvents'
 import LogIn from './pages/LogIn'
+import EditEvent from "./pages/EditEvent.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
   {
     path: "/log_in",
     element: <LogIn/>
+  },
+  {
+    path: "/event_details",
+    element: <EditEvent/>
   },
 ])
 

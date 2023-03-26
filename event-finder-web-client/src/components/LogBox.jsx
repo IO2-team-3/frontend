@@ -1,24 +1,23 @@
-import React from "react";
+import React, {useState} from "react";
 import "../style.css";
-const LogBox = () => {
-    return (
-        <div className="log-container bg-white-transparent rounded-3xl p-5">
-            <form>
-                <label htmlFor="email" className="form-control">Email</label>
-                <input
-                    id="email"
-                    type="email"
-                    className="form-control form-input p-3 rounded-3xl md:w-7/12 w-3/4"
-                    autoFocus/>
-                <label htmlFor="password" className="form-control">Password</label>
-                <input
-                    id="password"
-                    type="password"
-                    className="form-control form-input p-3 rounded-3xl md:w-7/12 w-3/4"
-                    />
-                <button className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
-                        Log in</button>
-            </form>
+import LogForm from "./LogForm.jsx";
+
+const LogBox = (props) => {
+    const handleClick = () => {
+        props.switch(false)
+    }
+
+    return(
+        <div>
+        {
+            props.isNR ?
+                <div className="log-container bg-white-transparent rounded-3xl p-5">
+                    <p style={{marginBottom:'15px'}} className="info">Already have an account?</p>
+                        <button className="switch-button p-3 rounded-3xl md:w-7/12 w-3/4"
+                            onClick={handleClick}>Sign in</button>
+                </div>
+                :<LogForm/>
+        }
         </div>
     )
 }
