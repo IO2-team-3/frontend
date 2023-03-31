@@ -66,8 +66,26 @@ const Navbar = () => {
                     className={`${!toggle ? "hidden" : "flex"
                         } p-6 bg-black-gradient absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar z-10`}
                 >
+
                     <ul className="list-none flex justify-end items-start flex-1 flex-col">
-                        {navLinks.map((nav, index) => (
+                        {
+                            user
+                            ?
+                            authNavLinks.map((nav, index) => (
+                                <li onClick={() => { nav.id==="log_out" ? logout() : {} }}
+                                    key={nav.id}
+                                    className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 
+                                    ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
+                                    ${index === navLinks.length - 1 ? "mr-0" : "mr-10"}`}
+                                    >
+                                        {nav.id === "log_out"
+                                            ? <Link onClick={logout}><i className={nav.icon}/> {nav.title}</Link>
+                                            : <Link to={nav.link}><i className={nav.icon}/> {nav.title}</Link>
+                                        }
+                                    </li>
+                                ))
+                            :
+                            navLinks.map((nav, index) => (
                             <li
                                 key={nav.id}
                                 className={`font-poppins font-medium cursor-pointer text-[16px] 

@@ -60,10 +60,8 @@ const RegisterForm = () => {
             //     email:{email},
             //     password:{password}
             // })
-        })
-            .then(res => {
-
-            })
+        }).then(res => res.json())
+            .then(json => console.log(json))
     }
 
     return(

@@ -45,7 +45,7 @@ const LogForm = () => {
         else return false;
     }
 
-    const handleClick = (e) => {
+    const handleClick = async (e) => {
         e.preventDefault();
         if(password === "" || !validateEmail(email)) {
             e.preventDefault();
@@ -53,20 +53,24 @@ const LogForm = () => {
             return;
         }
 
-        fetch(`http://localhost:8080/organizer/login?email=${email}&password=${password}`,{
+        await fetch(`http://localhost:8080/organizer/login?email=${email}&password=${password}`,{
             method: 'GET',
-            mode: 'no-cors'
             // body: JSON.stringify({
             //     email:{email},
             //     password:{password}
             // })
         })
-            .then(res => {
-                //console.log(res.json())
-                login({token:"8e932ceb-7979-4d60-bd44-c1af3393e4de"})
-                //SetInvalid(true);
-                //console.log(user)
-            })
+        .then(response => {
+            if(response.ok){
+                 let json = response.json();
+                 login({token:json['sessionToken']})
+            }
+            else{
+                SetError(true);
+            }
+        })
+            .catch(err => console.log(err))
+
     }
 
     const handleXClick = () =>{
