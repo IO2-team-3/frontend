@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import "../style.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {useAuth} from "../hooks/useAuth.jsx";
+
 
 const LogForm = () => {
     const [error,SetError] = useState(false);
@@ -12,6 +14,8 @@ const LogForm = () => {
 
     const [email,SetEmail] = useState("");
     const [password,SetPassword] = useState("");
+
+    const { user,login } = useAuth();
 
     useEffect(() => {
         if(invalid){
@@ -41,16 +45,32 @@ const LogForm = () => {
         else return false;
     }
 
-    const handleSubmit = (e) => {
-        if(email === "a@op.po"){
-            SetError(true)
-            e.preventDefault();
-        }
+    const handleClick = async (e) => {
+        e.preventDefault();
         if(password === "" || !validateEmail(email)) {
-            SetInvalid(true)
             e.preventDefault();
-            return false;
+            SetInvalid(true)
+            return;
         }
+
+        await fetch(`http://localhost:8080/organizer/login?email=${email}&password=${password}`,{
+            method: 'GET',
+            // body: JSON.stringify({
+            //     email:{email},
+            //     password:{password}
+            // })
+        })
+        .then(response => {
+            if(response.ok){
+                 let json = response.json();
+                 login({token:json['sessionToken']})
+            }
+            else{
+                SetError(true);
+            }
+        })
+            .catch(err => console.log(err))
+
     }
 
     const handleXClick = () =>{
@@ -70,7 +90,7 @@ const LogForm = () => {
                 </div>
             </div>
             <div className="log-container bg-white-transparent rounded-3xl p-5">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit = {handleClick}>
                     <label htmlFor="email" className="form-control">Email</label>
                     <input
                         id="email"
@@ -80,8 +100,8 @@ const LogForm = () => {
                         onChange={(e) => SetEmail(e.target.value)}
                         style={invalidEmail!==0?{outlineColor:"red"}:{}}
                         autoFocus/>
-                    <div className="message" hidden = {!(invalidEmail===1)}>Please enter valid email</div>
-                    <div className="message" hidden  = {!(invalidEmail===2)}>Please enter email</div>
+                    <div className="message" hidden = {!(invalidEmail===2)}>Please enter valid email</div>
+                    <div className="message" hidden  = {!(invalidEmail===1)}>Please enter email</div>
                     <label htmlFor="password" className="form-control">Password</label>
                     <input
                         id="password"
@@ -92,7 +112,7 @@ const LogForm = () => {
                         style={invalidPass?{outlineColor:"red"}:{}}
                     />
                     <div className="message" hidden={!invalidPass}>Please enter password</div>
-                    <button type='submit' className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
+                    <button type="submit" className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
                         Log in</button>
                 </form>
             </div>

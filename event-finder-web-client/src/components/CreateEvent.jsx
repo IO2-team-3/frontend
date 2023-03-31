@@ -75,7 +75,7 @@ const CreateEvent = () => {
 
     return (
         <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-15`}>
-            <form className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`} 
+            <form className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`}
                 onClick={() => {if(!toggle) setToggle(!toggle)}}>
 
                 <div className={`${toggle ? "none" : "hidden"}`}>

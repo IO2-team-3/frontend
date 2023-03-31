@@ -36,7 +36,7 @@ function EventComponent(event, eventToggle, setEventToggle,navigate){
       <span>
         <FontAwesomeIcon icon={faTrash} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12 hover:text-red-600"></FontAwesomeIcon>
       </span>
-      <span onClick={()=>{navigate('/event_details')}}>
+      <span onClick={()=>{navigate('/organizer/event_details',{state: event})}}>
         <FontAwesomeIcon icon={faPenToSquare} className="md:text-3xl text-sm float-right md:w-1/12 w-2/12 hover:text-gray-500"></FontAwesomeIcon>
       </span>
       <div className={`${eventToggle === event.id ? null : "hidden"}`}>

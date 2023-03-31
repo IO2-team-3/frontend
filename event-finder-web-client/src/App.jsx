@@ -1,11 +1,12 @@
 import React from 'react'
-import { BrowserRouter } from 'react-router-dom'
+import {BrowserRouter, Outlet} from 'react-router-dom'
 import styles from './style'
 import Navbar from './components/Navbar';
 import Slider from './components/Slider';
 import GetStarted from './components/GetStarted';
 import Statistics from './components/Statistics';
 import Footer from './components/Footer';
+import {Home} from "./components/Home.jsx";
 
 const App = () => (
 
@@ -41,6 +42,8 @@ const App = () => (
         <Footer />
       </div>
     </div>
+
+      <Outlet />
   </div>
 );
 
