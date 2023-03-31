@@ -46,11 +46,24 @@ const RegisterForm = () => {
     }
 
     const handleSubmit = (e) => {
+        e.preventDefault();
         if(password === "" || !validateEmail(email) || name === "") {
             SetInvalid(true);
-            e.preventDefault();
+
             return false;
         }
+
+        fetch(`http://localhost:8080/organizer?name=${name}&email=${email}&password=${password}`,{
+            method: 'POST',
+            // body: JSON.stringify({
+            //     name:{name},
+            //     email:{email},
+            //     password:{password}
+            // })
+        })
+            .then(res => {
+
+            })
     }
 
     return(

@@ -34,6 +34,7 @@ label{
 .form-control[data-autocompleted]{
     background-color: transparent !important;
 }
+
 .form-button{
     background-color: peru;
     color: white;
@@ -81,8 +82,9 @@ label{
     float: right;
 }
 .container{
-    width: 50%;
+    width: 400px;
     margin: auto;
+
 }
 .info{
     color: white;

@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import RegisterBox from "../components/RegisterBox.jsx";
 import LogBox from "../components/LogBox.jsx";
+import {Home} from "../components/Home.jsx";
 
 const LogIn = () => {
     const [toggle,SetToggle] = useState(false)

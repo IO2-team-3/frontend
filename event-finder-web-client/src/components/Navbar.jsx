@@ -1,17 +1,16 @@
 import React from "react";
 import { useState } from "react";
-import { router } from "../main"
-import { Link } from "react-router-dom";
+import {Link, Navigate, Outlet} from "react-router-dom";
 
 import { close, menu, logo } from "../assets";
-import { navLinks } from "../constants";
+import {authNavLinks, navLinks} from "../constants";
 
 import 'font-awesome/css/font-awesome.min.css';
+import {useAuth} from "../hooks/useAuth.jsx";
 
 const Navbar = () => {
-
     const [toggle, setToggle] = useState(false);
-
+    const {user,logout} = useAuth();
     return (
         <nav className="w-full flex w-full justify-between items-center navbar">
 
@@ -25,9 +24,25 @@ const Navbar = () => {
                 </Link>
             </div>
 
-
             <ul className="list-none sm:flex hidden justify-end items-center flex-1 py-6">
-                {navLinks.map((nav, index) => (
+                {
+                    user
+                    ?
+                    authNavLinks.map((nav, index) => (
+                        <li onClick={() => { nav.id==="log_out" ? logout() : {} }}
+                            key={nav.id}
+                            className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 
+                        ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
+                        ${index === navLinks.length - 1 ? "mr-0" : "mr-10"}`}
+                        >
+                            {nav.id === "log_out"
+                                ? <Link onClick={logout}><i className={nav.icon}/> {nav.title}</Link>
+                                : <Link to={nav.link}><i className={nav.icon}/> {nav.title}</Link>
+                            }
+                        </li>
+                    ))
+                    :
+                    navLinks.map((nav, index) => (
                     <li
                         key={nav.id}
                         className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 

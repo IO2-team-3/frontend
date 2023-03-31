@@ -18,16 +18,25 @@ export const navLinks = [
     link: "/",
   },
   {
-    id: "my_events",
-    title: "My events",
-    icon: "fa fa-book",
-    link: "/my_events",
-  },
-  {
     id: "log_in",
     title: "Log in",
     icon: "fa fa-solid fa-user",
     link: "/log_in",
+  },
+];
+
+export const authNavLinks = [
+  {
+    id: "my_events",
+    title: "My events",
+    icon: "fa fa-book",
+    link: "/organizer/my_events",
+  },
+  {
+    id: "log_out",
+    title: "Log out",
+    icon: "fa fa-solid fa-user",
+    link: "/",
   },
 ];
 
