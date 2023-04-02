@@ -1,11 +1,14 @@
 import React from "react";
 import styles from "../style";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth.jsx";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+
+import { geoCoordinatesValues } from "../constants";
 
 const CreateEvent = () => {
 
@@ -22,56 +25,113 @@ const CreateEvent = () => {
     const [formValues, setFormValues] = useState(initialValues);
     const [formErrors, setFormErrors] = useState(initialErrors);
     const [toggle, setToggle] = useState(false);
+    const { user } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
-       
-        if(name === "title"){
-            if(value === "") setFormErrors({ ...formErrors, [name]: "Event title is required!" });
-            else setFormErrors({ ...formErrors, [name]: "" });
-        }
-        if(name === "freePlaces"){
-            if(value === "") setFormErrors({ ...formErrors, [name]: "Number of free places is required!" });
-            else setFormErrors({ ...formErrors, [name]: "" });
-        }
+        validate(name, value);
+    };
+
+    const validate = (name, value) =>{
+
+        if(value === "") setFormErrors({ ...formErrors, [name]: `This field is required!` });
+        else setFormErrors({ ...formErrors, [name]: "" });
+
         if(name === "startTime"){
             var startDate = new Date(value);
             var endDate = new Date(formValues.endTime);
-            if(value === "") setFormErrors({ ...formErrors, [name]: "Start time is required!" });
-            else if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The start of event should be earlier than the end!" });
-            else setFormErrors({ ...formErrors, [name]: "", ["endTime"]: "" });
+            if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The start of event should be earlier than the end!" });
+            else if (value != "") setFormErrors({ ...formErrors, [name]: "", ["endTime"]: "" });
         }
         if(name === "endTime"){
             var startDate = new Date(formValues.startTime);
             var endDate = new Date(value);
-            if(value === "") setFormErrors({ ...formErrors, [name]: "End time is required!" });
-            else if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The end of event should be later than the beginning!" });
-            else setFormErrors({ ...formErrors, [name]: "",  ["startTime"]: "" });
+            if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The end of event should be later than the beginning!" });
+            else if (value != "") setFormErrors({ ...formErrors, [name]: "",  ["startTime"]: "" });
         }
-        if(name === "categories"){
-            if(value === "") setFormErrors({ ...formErrors, [name]: "Categories are required!" });
-            else if(!value.match(/[^,]+/)) setFormErrors({ ...formErrors, [name]: "Categories should be in format CategoryA,CategoryB,..." });
-            else setFormErrors({ ...formErrors, [name]: "" });
-        }
-        if(name === "placesScheme"){
-            if(value === "") setFormErrors({ ...formErrors, [name]: "Places scheme is required!" });
-            else setFormErrors({ ...formErrors, [name]: "" });
-        }
-        if(name === "latitude"){
-            if(value === "") setFormErrors({ ...formErrors, [name]: "Latitude is required!" });
-            else setFormErrors({ ...formErrors, [name]: "" });
-        }
-        if(name === "longitude"){
-            if(value === "") setFormErrors({ ...formErrors, [name]: "Longitude is required!" });
-            else setFormErrors({ ...formErrors, [name]: "" });
-        }
-    };
+
+        geoCoordinatesValues.map((coordinate) => {
+            if(name === coordinate.id){
+                let coordinateValue = Number(value);
+                if(coordinateValue < coordinate.min || coordinateValue > coordinate.max){
+                    setFormErrors({ ...formErrors, [name]: `${coordinate.name} should be greater than ${coordinate.min} and less than ${coordinate.max}`})
+                }
+                else if (value != ""){
+                    setFormErrors({ ...formErrors, [name]: "" });
+                }
+            }
+        })
+
+    }
 
     const handleSubmit = async (e) => {
-        setIsSubmit(true);
-        setToggle(false);
+
+        var titleVal = formValues.title;
+        var nameVal = formValues.description;
+        var freePlaceVal = formValues.freePlaces;
+        var placeSchemaVal = formValues.placesScheme;
+        var startTimeVal = new Date(formValues.startTime).getTime() / 1000;
+        var endTimeVal = new Date(formValues.endTime).getTime() / 1000;
+        var latitudeVal = formValues.latitude;
+        var longtitudeVal = formValues.longitude;
+        var categoriesVal = [];
+
+        var categoriesTable = formValues.categories.split(",");
+        for(var i = 0; i < categoriesTable.length; ++i){
+            categoriesTable[i] = categoriesTable[i].trim();
+        }
+        categoriesTable = categoriesTable.filter(e => String(e).trim());
+
+        for (var i = 0; i < categoriesTable.length; ++i) {
+            var found = categories.find((cat) => cat.name === categoriesTable[i]);
+            console.log(found);
+            if (found != undefined) {
+                categoriesVal.push(found.id)
+            } else {
+
+                var url = `http://localhost:8080/categories?categoryName=${categoriesTable[i]}`;
+                var token = `${user.sessionToken}`;
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'sessionToken': token,
+                    },
+                })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    categoriesVal.push(responseJson.id)
+                }).catch(error => console.log(error));
+            }
+        }
+
+        var url = `http://localhost:8080/events?title=${titleVal}&name=${nameVal}&freePlace=${freePlaceVal}&placeSchema=${placeSchemaVal}&startTime=${startTimeVal}&endTime=${endTimeVal}&latitude=${latitudeVal}&longitude=${longtitudeVal}&categories=${categoriesVal}`;
+        var token = `${user.sessionToken}`;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'sessionToken': token,
+            },
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                setIsSubmit(true);
+                setToggle(false);
+            }).catch(error => console.log(error));
+
     }
+
+    const [categories, setCategories] = useState([]);
+    var url = `http://localhost:8080/categories`;
+    useEffect(() => {
+        fetch(url, {
+            method: 'GET',
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+            setCategories(responseJson)
+        }).catch(error => console.log(error));
+    }, [])
 
     return (
         <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-15`}>
@@ -144,7 +204,6 @@ const CreateEvent = () => {
                             className="text-gray-400 p-4 rounded-3xl w-full input-text-effect form-input input-border"
                             value={formValues.startTime}
                             onChange={handleChange}
-                            max="2030-01-01T00:00"
                             required
                         >
                         </input>
@@ -181,14 +240,16 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input
-                            name="categories" 
+                            name="categories"
                             type="text"
+                            list="categoriesList"
                             placeholder="e.g. Sport, Music, Bussines . . ."
                             className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
                             value={formValues.categories}
                             onChange={handleChange}
                             required
                         >
+                            
                         </input>
                         <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
                             Categories
@@ -286,7 +347,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? " " : "hidden"} text-center my-10 float-right`}>
                     <button className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg 
                     shadow-md shadow-slate-100"
-                    onClick={handleSubmit}>
+                    onClick={ handleSubmit }>
                         Create
                     </button>
                 </div>

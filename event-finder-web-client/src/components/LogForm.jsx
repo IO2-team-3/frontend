@@ -63,7 +63,10 @@ const LogForm = () => {
         .then(response => {
             if(response.ok){
                  let json = response.json();
-                 login({token:json['sessionToken']})
+                 json.then((value) => {
+                    console.log(value);
+                    login(value)
+                })
             }
             else{
                 SetError(true);
