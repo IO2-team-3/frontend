@@ -7,6 +7,7 @@ import {useAuth} from "../hooks/useAuth.jsx";
 
 const LogForm = () => {
     const [error,SetError] = useState(false);
+    const [isLoading,SetLoading] = useState(false);
 
     const [invalid,SetInvalid] = useState(false)
     const [invalidEmail,SetInvalidEmail] = useState(0);
@@ -53,6 +54,7 @@ const LogForm = () => {
             return;
         }
 
+        SetLoading(true)
         await fetch(`http://localhost:8080/organizer/login?email=${email}&password=${password}`,{
             method: 'GET',
             // body: JSON.stringify({
@@ -69,6 +71,7 @@ const LogForm = () => {
                 SetError(true);
             }
         })
+            .finally(() => SetLoading(false))
             .catch(err => console.log(err))
 
     }
@@ -112,8 +115,20 @@ const LogForm = () => {
                         style={invalidPass?{outlineColor:"red"}:{}}
                     />
                     <div className="message" hidden={!invalidPass}>Please enter password</div>
-                    <button type="submit" className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
-                        Log in</button>
+
+                    {
+                        isLoading
+                            ?
+                            <button disabled
+                                    className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
+                                Logging in...
+                                <div className="inline-flex w-5 h-5 ml-5 border-l-2 border-t-2 border-white-900 rounded-full animate-spin" >
+                                </div>
+                            </button>
+                            :
+                            <button type="submit" className="form-control cursor-pointer form-button p-3 rounded-3xl md:w-7/12 w-3/4">
+                            Log in</button>
+                    }
                 </form>
             </div>
         </div>

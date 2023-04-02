@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 import "../style.css";
-const RegisterForm = () => {
+const RegisterForm = ({SetSuccess}) => {
     const [invalid,SetInvalid] = useState(false);
+    const [isLoading,SetLoading] = useState(false);
     const [invalidName,SetInvalidName] = useState(false);
     const [invalidEmail,SetInvalidEmail] = useState(0);
     const [invalidPass,SetInvalidPass] = useState(false);
@@ -45,7 +46,7 @@ const RegisterForm = () => {
         else return false;
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if(password === "" || !validateEmail(email) || name === "") {
             SetInvalid(true);
@@ -53,15 +54,22 @@ const RegisterForm = () => {
             return false;
         }
 
-        fetch(`http://localhost:8080/organizer?name=${name}&email=${email}&password=${password}`,{
+        SetLoading(true)
+        await fetch(`http://localhost:8080/organizer?name=${name}&email=${email}&password=${password}`,{
             method: 'POST',
             // body: JSON.stringify({
             //     name:{name},
             //     email:{email},
             //     password:{password}
             // })
-        }).then(res => res.json())
-            .then(json => console.log(json))
+        }).then(response => {
+            if(response.ok){
+                SetSuccess(2);
+            }
+        })
+            .finally(() => SetLoading(false))
+            .catch(err => console.log(err))
+
     }
 
     return(
@@ -94,8 +102,20 @@ const RegisterForm = () => {
                     className="form-control form-input p-3 rounded-3xl md:w-7/12 w-3/4"
                 />
                 <div className="message-reg" hidden = {!invalidPass}>Please enter password</div>
-                <button type="submit" className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
-                    Create account</button>
+                {
+                    isLoading
+                        ?
+                        <button disabled
+                                className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
+                            Signing in...
+                            <div
+                                className="inline-flex w-5 h-5 ml-5 border-l-2 border-t-2 border-white-900 rounded-full animate-spin">
+                            </div>
+                        </button>
+                        :
+                        <button type="submit" className="form-control form-button p-3 rounded-3xl md:w-7/12 w-3/4">
+                            Create account</button>
+                }
             </form>
         </div>
     )
