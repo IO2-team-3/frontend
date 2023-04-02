@@ -72,7 +72,7 @@ const Navbar = () => {
                             user
                             ?
                             authNavLinks.map((nav, index) => (
-                                <li onClick={() => { nav.id==="log_out" ? logout() : {} }}
+                                <li
                                     key={nav.id}
                                     className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 
                                     ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 

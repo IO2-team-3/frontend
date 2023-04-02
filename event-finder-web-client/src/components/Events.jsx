@@ -26,7 +26,7 @@ function Event(id, title, startTime, endTime, name, placeSchema, status, categor
 function EventComponent(event, eventToggle, setEventToggle,navigate){
 
   return (
-    <div key={event.id} className="bg-white p-3 w-full rounded-3xl cursor-pointer hover-effect-light text-cyan-400 hover:text-white 
+    <div key={event.id} className="bg-white p-3 w-full rounded-3xl cursor-pointer hover-effect-light text-cyan-400 hover:text-white
       space-y-6" onClick={() => {
         if(eventToggle === event.id) setEventToggle(null)
         else setEventToggle(event.id)

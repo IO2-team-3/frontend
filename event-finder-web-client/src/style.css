@@ -57,13 +57,13 @@ label{
     background-color: peru;
     color: white;
 }
-.error-container, .log-container,register-container {
+.error-container, .log-container {
     padding: 16px;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.log-container,register-container {
+.log-container {
     padding: 16px;
     align-items: center;
     margin-bottom: 30px;
@@ -90,17 +90,3 @@ label{
     color: white;
 }
 
-.right{
- float: right;
-    width: 45%;
-}
-.left{
-    display: inline;
-    float: left;
-    width: 45%;
-}
-.con
-{
-    display: flex;
-    flex-direction:column
-}
