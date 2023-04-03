@@ -187,3 +187,18 @@ export const inFutureIcon = faForward
 export const pendingIcon = faCircle
 export const doneIcon = faCircleCheck
 export const cancelledIcon = faRectangleXmark
+
+export const geoCoordinatesValues = [
+  {
+    id: "latitude",
+    name: "Latitude",
+    min: -90, 
+    max: 90 
+  },
+  {
+    id: "longitude",
+    name: "Longitude",
+    min: -180, 
+    max: 180 
+  }
+]
