@@ -3,6 +3,7 @@ import "../style.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../hooks/useAuth.jsx";
+import {api} from "../constants/index.js";
 
 
 const LogForm = () => {
@@ -55,12 +56,13 @@ const LogForm = () => {
         }
 
         SetLoading(true)
-        await fetch(`http://localhost:8080/organizer/login?email=${email}&password=${password}`,{
+        await fetch(api.base + `/organizer/login`,{
             method: 'GET',
-            // body: JSON.stringify({
-            //     email:{email},
-            //     password:{password}
-            // })
+            headers: {
+                'Accept': 'application/json',
+                'email':email,
+                'password':password
+            }
         })
         .then(response => {
             if(response.ok){

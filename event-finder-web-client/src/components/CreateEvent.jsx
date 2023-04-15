@@ -8,7 +8,7 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
-import { geoCoordinatesValues } from "../constants";
+import {api, geoCoordinatesValues} from "../constants";
 
 const CreateEvent = () => {
 
@@ -90,7 +90,7 @@ const CreateEvent = () => {
                 categoriesVal.push(found.id)
             } else {
 
-                var url = `http://localhost:8080/categories?categoryName=${categoriesTable[i]}`;
+                var url = api.base + `/categories?categoryName=${categoriesTable[i]}`;
                 var token = `${user.sessionToken}`;
                 fetch(url, {
                     method: 'POST',
@@ -105,7 +105,7 @@ const CreateEvent = () => {
             }
         }
 
-        var url = `http://localhost:8080/events?title=${titleVal}&name=${nameVal}&freePlace=${freePlaceVal}&placeSchema=${placeSchemaVal}&startTime=${startTimeVal}&endTime=${endTimeVal}&latitude=${latitudeVal}&longitude=${longtitudeVal}&categories=${categoriesVal}`;
+        var url = api.base + `/events?title=${titleVal}&name=${nameVal}&freePlace=${freePlaceVal}&placeSchema=${placeSchemaVal}&startTime=${startTimeVal}&endTime=${endTimeVal}&latitude=${latitudeVal}&longitude=${longtitudeVal}&categories=${categoriesVal}`;
         var token = `${user.sessionToken}`;
         fetch(url, {
             method: 'POST',
@@ -122,7 +122,7 @@ const CreateEvent = () => {
     }
 
     const [categories, setCategories] = useState([]);
-    var url = `http://localhost:8080/categories`;
+    var url = api.base + `/categories`;
     useEffect(() => {
         fetch(url, {
             method: 'GET',
