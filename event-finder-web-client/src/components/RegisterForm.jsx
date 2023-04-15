@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "../style.css";
-const RegisterForm = ({SetSuccess}) => {
+import {api} from "../constants/index.js";
+const RegisterForm = ({SetSuccess,SetId}) => {
     const [invalid,SetInvalid] = useState(false);
     const [isLoading,SetLoading] = useState(false);
     const [invalidName,SetInvalidName] = useState(false);
@@ -50,23 +51,31 @@ const RegisterForm = ({SetSuccess}) => {
         e.preventDefault();
         if(password === "" || !validateEmail(email) || name === "") {
             SetInvalid(true);
-
             return false;
         }
 
         SetLoading(true)
-        await fetch(`http://localhost:8080/organizer?name=${name}&email=${email}&password=${password}`,{
+
+        await fetch(api.base + `/organizer`,{
             method: 'POST',
-            // body: JSON.stringify({
-            //     name:{name},
-            //     email:{email},
-            //     password:{password}
-            // })
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
         }).then(response => {
             if(response.ok){
                 SetSuccess(2);
+                return response.json();
             }
         })
+            .then(json => {
+                SetId(json.id);
+            })
             .finally(() => SetLoading(false))
             .catch(err => console.log(err))
 

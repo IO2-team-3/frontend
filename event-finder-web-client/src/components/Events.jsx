@@ -11,7 +11,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faHourglassStart } from "@fortawesome/free-solid-svg-icons";
 import { faHourglassEnd } from "@fortawesome/free-solid-svg-icons";
-import { cancelledIcon, inFutureIcon, pendingIcon, doneIcon } from "../constants";
+import {cancelledIcon, inFutureIcon, pendingIcon, doneIcon, api} from "../constants";
 
 function EventComponent(event, eventToggle, setEventToggle, navigate) {
 
@@ -84,7 +84,7 @@ const Events = () => {
   useEffect(() => {
 
     const intervalId = setInterval(() => {
-      var url = "http://localhost:8080/events/my";
+      var url = api.base +  "/events/my";
       fetch(url, {
         method: 'GET',
         headers: {

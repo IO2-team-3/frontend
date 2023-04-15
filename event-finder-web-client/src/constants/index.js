@@ -40,6 +40,10 @@ export const authNavLinks = [
   },
 ];
 
+export const api = {
+    base: "http://localhost:5000"
+}
+
 export const slides = [
   {
     id: "1",

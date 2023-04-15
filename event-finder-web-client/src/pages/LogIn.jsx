@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import styles from '../style'
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -8,9 +8,12 @@ import LogBox from "../components/LogBox.jsx";
 const LogIn = () => {
     const [option,SetOption] = useState(0)
 
+    useEffect(() => {
+        window.scrollTo(0,0)
+    },[])
+    
     return (
         <div className="background-wrapper w-full overflow-hidden bg-black-gradient ">
-
             <div className={`${styles.paddingX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidth}`}>
                     <Navbar/>
