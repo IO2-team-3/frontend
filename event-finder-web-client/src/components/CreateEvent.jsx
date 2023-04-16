@@ -15,12 +15,12 @@ const CreateEvent = () => {
     const initialValues = {
         title: "", freePlaces: "", startTime: "", 
         endTime: "", categories: "", description: "", 
-        placesScheme: "", latitude: "", longitude: ""
+        placeSchema: "", latitude: "", longitude: ""
     }
     const initialErrors = {
         title: "", freePlaces: "", startTime: "", 
         endTime: "", categories: "", description: "", 
-        placesScheme: "", latitude: "", longitude: ""
+        placeSchema: "", latitude: "", longitude: ""
     }
     const [formValues, setFormValues] = useState(initialValues);
     const [formErrors, setFormErrors] = useState(initialErrors);
@@ -28,6 +28,7 @@ const CreateEvent = () => {
     const { user } = useAuth();
 
     const handleChange = (e) => {
+        e.preventDefault()
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
         validate(name, value);
@@ -35,7 +36,7 @@ const CreateEvent = () => {
 
     const validate = (name, value) =>{
 
-        if(value === "") setFormErrors({ ...formErrors, [name]: `This field is required!` });
+        if(value === "" && name != "placeSchema") setFormErrors({ ...formErrors, [name]: `This field is required!` });
         else setFormErrors({ ...formErrors, [name]: "" });
 
         if(name === "startTime"){
@@ -49,6 +50,12 @@ const CreateEvent = () => {
             var endDate = new Date(value);
             if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The end of event should be later than the beginning!" });
             else if (value != "") setFormErrors({ ...formErrors, [name]: "",  ["startTime"]: "" });
+        }
+        if(name === "placeSchema"){
+            var format = value.split('.').pop();
+            if(format != 'jpg' && format != 'png' && format != 'gif' && format != ''){
+                setFormErrors({ ...formErrors, [name]: "Incorrect file format! Should be .jpg, .png or .gif." });
+            }else setFormErrors({ ...formErrors, [name]: "",  ["placeSchema"]: "" });
         }
 
         geoCoordinatesValues.map((coordinate) => {
@@ -65,84 +72,90 @@ const CreateEvent = () => {
 
     }
 
+    const toBase64 = file => new Promise((resolve, reject) => {
+        if(!file) resolve("");
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
     const handleSubmit = (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         var titleVal = formValues.title;
         var nameVal = formValues.description;
         var freePlaceVal = formValues.freePlaces;
-        var placeSchemaVal = formValues.placesScheme;
         var startTimeVal = new Date(formValues.startTime).getTime() / 1000;
         var endTimeVal = new Date(formValues.endTime).getTime() / 1000;
         var latitudeVal = formValues.latitude;
         var longitudeVal = formValues.longitude;
         var categoriesVal = [];
+        var file = document.querySelector('#file').files[0];
+        toBase64(file)
+            .then(base64 => {
+                var placeSchemaVal = base64;
 
-        var categoriesTable = formValues.categories.split(",");
-        for(var i = 0; i < categoriesTable.length; ++i){
-            categoriesTable[i] = categoriesTable[i].trim();
-        }
-        categoriesTable = categoriesTable.filter(e => String(e).trim());
-
-        const categoriesPromises = [];
-        for (var i = 0; i < categoriesTable.length; ++i) {
-            var found = categories.find((cat) => cat.name === categoriesTable[i]);
-            if (found != undefined) {
-                categoriesVal.push(found.id)
-            } else {
-
-                var url = api.base + `/categories?categoryName=${categoriesTable[i]}`;
-                var token = `${user.sessionToken}`;
-
-                categoriesPromises.push(fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'sessionToken': token,
-                    },
-                }))
-                //    .then((response) => categoriesPromises.push(response.json()))
-                //.then((responseJson) => {
-                //    categoriesVal.push(responseJson.id)
-                //    console.log(responseJson.name + ' added')
-                //}).catch(error => console.log(error));
-            }
-        }
- 
-        console.log(categoriesPromises)
-        Promise.all(categoriesPromises)
-            .then((responses) =>
-                Promise.all(responses.map(response => response.json())))
-            .then((newCategories) => {
-                newCategories.forEach((c) => categoriesVal.push(c.id))
-                
-                var url = api.base + '/events';
-                var token = `${user.sessionToken}`;
-                var bodyData = JSON.stringify({
-                    title: titleVal,
-                    name: nameVal,
-                    startTime: startTimeVal,
-                    endTime: endTimeVal,
-                    latitude: latitudeVal,
-                    longitude: longitudeVal,
-                    placeSchema: placeSchemaVal,
-                    maxPlace: freePlaceVal,
-                    categoriesIds: categoriesVal
-                })
-                console.log(bodyData);
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'sessionToken': token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: bodyData
-                })
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                        setToggle(false);
-                    }).catch(error => console.log(error));
+                var categoriesTable = formValues.categories.split(",");
+                for (var i = 0; i < categoriesTable.length; ++i) {
+                    categoriesTable[i] = categoriesTable[i].trim();
                 }
-            )
+                categoriesTable = categoriesTable.filter(e => String(e).trim());
+
+                const categoriesPromises = [];
+                for (var i = 0; i < categoriesTable.length; ++i) {
+                    var found = categories.find((cat) => cat.name === categoriesTable[i]);
+                    if (found != undefined) {
+                        categoriesVal.push(found.id)
+                    } else {
+
+                        var url = api.base + `/categories?categoryName=${categoriesTable[i]}`;
+                        var token = `${user.sessionToken}`;
+
+                        categoriesPromises.push(fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'sessionToken': token,
+                            },
+                        }))
+                    }
+                }
+
+                Promise.all(categoriesPromises)
+                    .then((responses) =>
+                        Promise.all(responses.map(response => response.json())))
+                    .then((newCategories) => {
+                        newCategories.forEach((c) => categoriesVal.push(c.id))
+
+                        var url = api.base + '/events';
+                        var token = `${user.sessionToken}`;
+                        var bodyData = JSON.stringify({
+                            title: titleVal,
+                            name: nameVal,
+                            startTime: startTimeVal,
+                            endTime: endTimeVal,
+                            latitude: latitudeVal,
+                            longitude: longitudeVal,
+                            placeSchema: placeSchemaVal,
+                            maxPlace: freePlaceVal,
+                            categoriesIds: categoriesVal
+                        })
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'sessionToken': token,
+                                'Content-Type': 'application/json'
+                            },
+                            body: bodyData
+                        })
+                            .then((response) => response.json())
+                            .then(() => {
+                                setToggle(false);
+                                setFormValues(initialValues)
+                            }).catch(error => console.log(error));
+                    }
+                    )
+            })
     }
 
     const [categories, setCategories] = useState([]);
@@ -159,7 +172,7 @@ const CreateEvent = () => {
 
     return (
         <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-15`}>
-            <form className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`}
+            <form id="form" className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`}
                 onClick={() => {if(!toggle) setToggle(!toggle)}}>
 
                 <div className={`${toggle ? "none" : "hidden"}`}>
@@ -305,20 +318,21 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
-                            name="placesScheme"
-                            type="text"
+                            name="placeSchema"
+                            type="file"
                             placeholder="Provide places scheme . . ."
                             className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
-                            value={formValues.placesScheme}
+                            value={formValues.placeSchema}
                             onChange={handleChange}
-                            required
+                            accept="image/*"
+                            id="file"
                         >
                         </input>
-                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                        <label className="relative text-sm placeholder-fileinput rounded-full py-0 bg-black px-3">
                             Places scheme
                         </label>
-                        {formErrors.placesScheme != "" ? 
-                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.placesScheme}</p> : null}
+                        {formErrors.placeSchema != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.placeSchema}</p> : null}
                     </div>
                 </div>
 
@@ -357,6 +371,7 @@ const CreateEvent = () => {
                             step="any"
                             min="-180"
                             max="180"
+                            required
                         >
                         </input>
                         <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
@@ -368,7 +383,7 @@ const CreateEvent = () => {
                 </div>
 
                 <div className={`${toggle ? " " : "hidden"} text-center my-10 float-right`}>
-                    <button className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg 
+                    <button id="submit" className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg 
                     shadow-md shadow-slate-100"
                     onClick={ handleSubmit }>
                         Create
