@@ -10,7 +10,7 @@ import EditEvent from "./pages/EditEvent.jsx";
 import {AuthLayout} from "./components/AuthLayout.jsx";
 import {Home} from "./components/Home.jsx";
 import {Protected} from "./components/Protected.jsx";
-import ProgressBar from "./components/ProgressBar.jsx";
+import OrganizerProfile from "./pages/OrganizerProfile.jsx";
 
 const getUserData = () =>
     new Promise((resolve) =>
@@ -33,6 +33,7 @@ export const router = createBrowserRouter(
 
             <Route path="/organizer" element={<Protected/>}>
                 <Route path="my_events" element={<MyEvents />} />
+                <Route path="profile" element={<OrganizerProfile />} />
                 <Route path="event_details" element={<EditEvent />} />
             </Route>
         </Route>
