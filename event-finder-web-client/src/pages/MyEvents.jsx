@@ -23,7 +23,7 @@ const MyEvents = () => (
         <OrganizPanel/>
         <CreateEvent/>
         <Events/>
-        <DeleteAccount/>
+        {/*<DeleteAccount/>*/}
       </div>
     </div>
 

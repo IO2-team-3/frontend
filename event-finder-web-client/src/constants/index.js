@@ -33,9 +33,15 @@ export const authNavLinks = [
     link: "/organizer/my_events",
   },
   {
+    id: "profile",
+    title: "Profile",
+    icon: "fa fa-solid fa-user",
+    link: "/organizer/profile",
+  },
+  {
     id: "log_out",
     title: "Log out",
-    icon: "fa fa-solid fa-user",
+    icon: "fa fa-arrow-right",
     link: "/",
   },
 ];

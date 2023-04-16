@@ -5,61 +5,64 @@ import { useAuth } from "../hooks/useAuth.jsx";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import {api} from "../constants/index.js";
 
-const DeleteAccount = () => {
+const DeleteAccount = ({id}) => {
 
   const [toggle, setToggle] = useState(false);
   const {user, logout} = useAuth();
-  const [organizer, setOrganizer] = useState(null);
 
-  useEffect(() => {
-    let url = "http://localhost:8080/organizer";
-    let token = `${user.sessionToken}`
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'sessionToken': token,
-      }
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        setOrganizer(responseJson)
-      }).catch(error => console.log(error));
-  }, [])
+  // useEffect(() => {
+  //   let url = "http://localhost:8080/organizer";
+  //   let token = `${user.sessionToken}`
+  //   fetch(url, {
+  //     method: 'GET',
+  //     headers: {
+  //       'sessionToken': token,
+  //     }
+  //   })
+  //     .then((response) => response.json())
+  //     .then((responseJson) => {
+  //       setOrganizer(responseJson)
+  //     }).catch(error => console.log(error));
+  // }, [])
 
   return (
-    <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-6`}>
+    <div
+        className="w-full font-poppins"
+    >
       {!toggle ?
-        <div className="bg-black-gradient p-3 w-9/12 rounded-3xl font-poppins cursor-pointer hover-effect"
+        <div className="text-center bg-black-gradient p-3 rounded-3xl cursor-pointer hover-effect mt-10 sm:mt-0"
           onClick={() => { if (!toggle) setToggle(!toggle) }}>
           <FontAwesomeIcon icon={faTrash} className="text-white"></FontAwesomeIcon> Delete account
         </div> : null}
       {toggle ?
-        <div className="bg-red-500 p-3 w-9/12 rounded-3xl font-poppins align-center space-x-10">
-          <span className='p-1'>Are you sure you want to delete account?</span>
-          <span className='p-1 bg-white rounded-xl cursor-pointer hover-effect w-1/12 float-right text-center'
-            onClick={() => setToggle(!toggle)}>No</span>
-          <span className='p-1 bg-white rounded-xl cursor-pointer hover:bg-red-900 w-1/12 float-right text-center'
-            onClick={() => {
-              if(organizer != null){
-              logout();
+        <div className="bg-red-500 p-3 rounded-3xl flex flex-wrap">
+          <span className='p-1 w-3/4'>Are you sure you want to delete account?</span>
+          <div className='w-32 flex space-x-5 justify-end'>
+            <span className='p-1 bg-white rounded-xl cursor-pointer hover-effect text-center text-black'
+                  onClick={() => setToggle(!toggle)}>No</span>
+            <span className='p-1 bg-white rounded-xl cursor-pointer hover:bg-red-900 text-center text-black'
+                  onClick={() => {
+                      logout();
 
-              let url = `http://localhost:8080/organizer/${organizer.id}`;
-              let token = `${user.sessionToken}`
-              fetch(url, {
-                method: 'DELETE',
-                headers: {
-                  'sessionToken': token,
-                }
-              })
-                .then((response) => response.json())
-                .then((responseJson) => {
-                  console.log(responseJson)
-                }).catch(error => console.log(error));
-              }
-            }}>Yes</span>
+                      let url = api.base + `/organizer/${id}`;
+                      let token = `${user.sessionToken}`
+                      fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                          'sessionToken': token,
+                        }
+                      })
+                          .then((response) => response.json())
+                          .then((responseJson) => {
+                            console.log(responseJson)
+                          }).catch(error => console.log(error));
+                    }
+                  }>Yes</span>
+          </div>
         </div> : null}
-    </section>
+    </div>
   );
 }
 

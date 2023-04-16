@@ -33,7 +33,7 @@ const Navbar = () => {
                             key={nav.id}
                             className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 
                         ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
-                        ${index === navLinks.length - 1 ? "mr-0" : "mr-10"}`}
+                        ${index === navLinks.length ? "mr-0" : "mr-10"}`}
                         >
                             {nav.id === "log_out"
                                 ? <Link onClick={logout}><i className={nav.icon}/> {nav.title}</Link>
@@ -47,7 +47,7 @@ const Navbar = () => {
                         key={nav.id}
                         className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 
                             ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
-                            ${index === navLinks.length - 1 ? "mr-0" : "mr-10"}`}
+                            ${index === navLinks.length ? "mr-0" : "mr-10"}`}
                     >
                         <Link to={nav.link}><i className={nav.icon} /> {nav.title}</Link>
                     </li>
@@ -74,9 +74,9 @@ const Navbar = () => {
                             authNavLinks.map((nav, index) => (
                                 <li
                                     key={nav.id}
-                                    className={`font-poppins font-normal cursor-pointer navbar-element text-[16px] 
+                                    className={`font-poppins font-normal cursor-pointer text-[16px] 
                                     ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
-                                    ${index === navLinks.length - 1 ? "mr-0" : "mr-10"}`}
+                                    ${index === navLinks.length ? "mb-0" : "mb-4"}`}
                                     >
                                         {nav.id === "log_out"
                                             ? <Link onClick={logout}><i className={nav.icon}/> {nav.title}</Link>
@@ -90,7 +90,7 @@ const Navbar = () => {
                                 key={nav.id}
                                 className={`font-poppins font-medium cursor-pointer text-[16px] 
                                 ${window.location.pathname === nav.link ? "text-white" : "text-dimWhite"} 
-                                ${index === navLinks.length - 1 ? "mb-0" : "mb-4"}`}
+                                ${index === navLinks.length ? "mb-0" : "mb-4"}`}
                             >
                                 <Link to={nav.link}><i className={nav.icon} /> {nav.title}</Link>
                             </li>
