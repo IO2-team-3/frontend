@@ -41,7 +41,7 @@ export const authNavLinks = [
 ];
 
 export const api = {
-    base: "http://localhost:5000"
+    base: "http://io2central-env.eba-vfjwqcev.eu-north-1.elasticbeanstalk.com"
 }
 
 export const slides = [

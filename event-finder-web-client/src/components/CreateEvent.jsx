@@ -65,7 +65,8 @@ const CreateEvent = () => {
 
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
+        e.preventDefault()
 
         var titleVal = formValues.title;
         var nameVal = formValues.description;
@@ -74,7 +75,7 @@ const CreateEvent = () => {
         var startTimeVal = new Date(formValues.startTime).getTime() / 1000;
         var endTimeVal = new Date(formValues.endTime).getTime() / 1000;
         var latitudeVal = formValues.latitude;
-        var longtitudeVal = formValues.longitude;
+        var longitudeVal = formValues.longitude;
         var categoriesVal = [];
 
         var categoriesTable = formValues.categories.split(",");
@@ -83,42 +84,65 @@ const CreateEvent = () => {
         }
         categoriesTable = categoriesTable.filter(e => String(e).trim());
 
+        const categoriesPromises = [];
         for (var i = 0; i < categoriesTable.length; ++i) {
             var found = categories.find((cat) => cat.name === categoriesTable[i]);
-            console.log(found);
             if (found != undefined) {
                 categoriesVal.push(found.id)
             } else {
 
                 var url = api.base + `/categories?categoryName=${categoriesTable[i]}`;
                 var token = `${user.sessionToken}`;
-                fetch(url, {
+
+                categoriesPromises.push(fetch(url, {
                     method: 'POST',
                     headers: {
                         'sessionToken': token,
                     },
-                })
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    categoriesVal.push(responseJson.id)
-                }).catch(error => console.log(error));
+                }))
+                //    .then((response) => categoriesPromises.push(response.json()))
+                //.then((responseJson) => {
+                //    categoriesVal.push(responseJson.id)
+                //    console.log(responseJson.name + ' added')
+                //}).catch(error => console.log(error));
             }
         }
-
-        var url = api.base + `/events?title=${titleVal}&name=${nameVal}&freePlace=${freePlaceVal}&placeSchema=${placeSchemaVal}&startTime=${startTimeVal}&endTime=${endTimeVal}&latitude=${latitudeVal}&longitude=${longtitudeVal}&categories=${categoriesVal}`;
-        var token = `${user.sessionToken}`;
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'sessionToken': token,
-            },
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-                setIsSubmit(true);
-                setToggle(false);
-            }).catch(error => console.log(error));
-
+ 
+        console.log(categoriesPromises)
+        Promise.all(categoriesPromises)
+            .then((responses) =>
+                Promise.all(responses.map(response => response.json())))
+            .then((newCategories) => {
+                newCategories.forEach((c) => categoriesVal.push(c.id))
+                
+                var url = api.base + '/events';
+                var token = `${user.sessionToken}`;
+                var bodyData = JSON.stringify({
+                    title: titleVal,
+                    name: nameVal,
+                    startTime: startTimeVal,
+                    endTime: endTimeVal,
+                    latitude: latitudeVal,
+                    longitude: longitudeVal,
+                    placeSchema: placeSchemaVal,
+                    maxPlace: freePlaceVal,
+                    categoriesIds: categoriesVal
+                })
+                console.log(bodyData);
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'sessionToken': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: bodyData
+                })
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        setToggle(false);
+                    }).catch(error => console.log(error));
+                }
+            )
     }
 
     const [categories, setCategories] = useState([]);
@@ -172,28 +196,6 @@ const CreateEvent = () => {
                         <p className="text-red-400 left-5"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.title}</p> : null}
                     </div>
                 </div>
-
-                <div className={`${toggle ? "none" : "hidden"}`}>
-                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
-                        <input 
-                            name="freePlaces"
-                            type="number"
-                            placeholder="Number of free places . . ."
-                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
-                            value={formValues.freePlaces}
-                            onChange={handleChange}
-                            required
-                            min="1"
-                        >
-                        </input>
-                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
-                            Free places
-                        </label>
-                        {formErrors.freePlaces != "" ? 
-                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.freePlaces}</p> : null}
-                    </div>
-                </div>
-
 
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
@@ -276,6 +278,27 @@ const CreateEvent = () => {
                         </label>
                         {formErrors.description != "" ? 
                         <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.description}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            name="freePlaces"
+                            type="number"
+                            placeholder="Number of free places . . ."
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            value={formValues.freePlaces}
+                            onChange={handleChange}
+                            required
+                            min="1"
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder rounded-full py-0 bg-black px-3">
+                            Free places
+                        </label>
+                        {formErrors.freePlaces != "" ? 
+                        <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.freePlaces}</p> : null}
                     </div>
                 </div>
 

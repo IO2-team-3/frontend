@@ -60,6 +60,7 @@ const LogForm = () => {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
+                'Access-Control-Allow-Origin': "*",
                 'email':email,
                 'password':password
             }
