@@ -32,7 +32,7 @@ const DeleteAccount = ({id}) => {
         className="w-full font-poppins"
     >
       {!toggle ?
-        <div className="text-center bg-black-gradient p-3 rounded-3xl cursor-pointer hover-effect mt-10 sm:mt-0"
+        <div className="text-center bg-black-gradient p-3 rounded-3xl cursor-pointer hover-effect mt-10 md:mt-0"
           onClick={() => { if (!toggle) setToggle(!toggle) }}>
           <FontAwesomeIcon icon={faTrash} className="text-white"></FontAwesomeIcon> Delete account
         </div> : null}

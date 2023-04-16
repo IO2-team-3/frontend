@@ -72,8 +72,8 @@ const OrganizProfile = () => {
         {
             edit ?
             <form onSubmit={handleSubmit}>
-                <div className="sm:flex py-8 sm:space-x-20">
-                    <div className="sm:w-96 space-y-7 mb-10 sm:mb-0">
+                <div className="md:flex py-8 md:space-x-20">
+                    <div className="md:w-64 space-y-7 mb-10 md:mb-0 md:shrink-0">
                         <div className="bg-white-transparent border border-cyan-500 p-5 rounded-3xl flex justify-center">
                             <FontAwesomeIcon className="fa-10x" icon={faUserPen} style={{color: "#1c7b82"}}/>
                         </div>
@@ -104,8 +104,8 @@ const OrganizProfile = () => {
             </form>
             :
             <div>
-                <div className="sm:flex py-8 sm:space-x-20">
-                    <div className="sm:w-96 space-y-7 mb-10 sm:mb-0">
+                <div className="md:flex py-8 md:space-x-20">
+                    <div className="md:w-64 space-y-7 mb-10 md:mb-0 md:shrink-0">
                         <div className="bg-white-transparent border border-cyan-500 p-5 rounded-3xl flex justify-center">
                             <FontAwesomeIcon className="fa-10x" icon={faUser} style={{color: "#1c7b82"}}/>
                         </div>
