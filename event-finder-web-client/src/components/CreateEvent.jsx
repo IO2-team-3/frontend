@@ -25,6 +25,7 @@ const CreateEvent = () => {
     const [formValues, setFormValues] = useState(initialValues);
     const [formErrors, setFormErrors] = useState(initialErrors);
     const [toggle, setToggle] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 
     const handleChange = (e) => {
@@ -82,7 +83,6 @@ const CreateEvent = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         var titleVal = formValues.title;
         var nameVal = formValues.description;
         var freePlaceVal = formValues.freePlaces;
@@ -92,6 +92,9 @@ const CreateEvent = () => {
         var longitudeVal = formValues.longitude;
         var categoriesVal = [];
         var file = document.querySelector('#file').files[0];
+
+        setLoading(true);
+
         toBase64(file)
             .then(base64 => {
                 var placeSchemaVal = base64;
@@ -150,12 +153,16 @@ const CreateEvent = () => {
                         })
                             .then((response) => response.json())
                             .then(() => {
-                                setToggle(false);
-                                setFormValues(initialValues)
-                            }).catch(error => console.log(error));
+                                //setToggle(false);
+                                //setFormValues(initialValues)
+                                setLoading(false)
+                                window.location.reload()
+                            })
+                            .catch(error => console.log(error));
                     }
                     )
             })
+
     }
 
     const [categories, setCategories] = useState([]);
@@ -383,11 +390,19 @@ const CreateEvent = () => {
                 </div>
 
                 <div className={`${toggle ? " " : "hidden"} text-center my-10 float-right`}>
-                    <button id="submit" className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg 
-                    shadow-md shadow-slate-100"
-                    onClick={ handleSubmit }>
-                        Create
-                    </button>
+                    {
+                        loading
+                        ?
+                        <button id="submit" className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg
+                                shadow-md shadow-slate-100" onClick={ handleSubmit }>
+                            Saving ... <div className="inline-flex w-5 h-5 ml-5 border-l-2 border-t-2 border-white-900 rounded-full animate-spin" />
+                        </button>
+                        :
+                        <button id="submit" className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg
+                                shadow-md shadow-slate-100" onClick={ handleSubmit }>
+                            Create
+                        </button>
+                    }
                 </div>
 
             </form>
