@@ -155,7 +155,7 @@ const CreateEvent = () => {
                             .then(() => {
                                 //setToggle(false);
                                 //setFormValues(initialValues)
-                                setLoading(false)
+                                //setLoading(false)
                                 window.location.reload()
                             })
                             .catch(error => console.log(error));
@@ -394,8 +394,8 @@ const CreateEvent = () => {
                         loading
                         ?
                         <button id="submit" className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg
-                                shadow-md shadow-slate-100" onClick={ handleSubmit }>
-                            Saving ... <div className="inline-flex w-5 h-5 ml-5 border-l-2 border-t-2 border-white-900 rounded-full animate-spin" />
+                                shadow-md shadow-slate-100">
+                            Saving <div className="inline-flex w-5 h-5 ml-5 border-l-2 border-t-2 border-white-900 rounded-full animate-spin" />
                         </button>
                         :
                         <button id="submit" className="link-effect text-lg md:text-3xl font-semibold cursor-pointer border-2 border-solid p-3 rounded-lg

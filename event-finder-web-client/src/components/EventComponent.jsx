@@ -25,7 +25,7 @@ const EventComponent = ({event, eventToggle, setEventToggle,token, refresh, setR
                 if(response.ok){
                     SetDeleteToggle(!deleteToggle);
                     setEventToggle(event.id);
-                    setRefresh(true);
+                    setRefresh(!refresh);
                 }
             })
             .catch(error => {

@@ -7,7 +7,7 @@ const ProgressBar = (props) => {
                 <div className={`h-full rounded bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500`}
                      style={{width: `${props.percent}%`}}></div>
             </div>
-            <div style={{width:`${window.screen.width}px`,height:`${window.screen.height}px`}}/>
+            <div style={{width:`${window.screen.availWidth}px`,height:"calc(100vh - 8px)"}}/>
         </div>
     );
 }
