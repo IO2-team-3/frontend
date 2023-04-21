@@ -41,11 +41,12 @@ const OrganizProfile = () => {
     }
 
     const handleSubmit = (e) => {
+        e.preventDefault();
         if(name === '' || pass === ''){
-            e.preventDefault();
             return;
         }
         SetSaving(true);
+
         fetch(api.base + `/organizer/${id}`, {
             method: 'PATCH',
             headers: {
@@ -57,9 +58,10 @@ const OrganizProfile = () => {
                 name: name,
                 password: pass
             })
-        }).then(result => result.json())
-            .then(json => console.log(json))
-            .finally(() => SetSaving(false))
+        })
+            .then(result => {
+                if(result.ok) window.location.reload()
+            })
             .catch(err => console.log(err))
     }
 

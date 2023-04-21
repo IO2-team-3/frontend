@@ -10,26 +10,26 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     // call this function when you want to authenticate the user
-    const refreshToken = async () => {
-        await fetch(api.base + `/organizer/login`,{
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'email': data.email,
-                'password': data. password
-            }
-        })
-            .then(response => {
-                if(response.ok){
-                    let json = response.json();
-                    json.then((value) => {
-                        console.log(value);
-                        login(value)
-                    })
-                }
-            })
-            .catch(err => console.log(err))
-    }
+    // const refreshToken = async (data) => {
+    //     await fetch(api.base + `/organizer/login`,{
+    //         method: 'GET',
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'email': data.email,
+    //             'password': data.password
+    //         }
+    //     })
+    //         .then(response => {
+    //             if(response.ok){
+    //                 let json = response.json();
+    //                 json.then((value) => {
+    //                     console.log(value);
+    //                     login(value)
+    //                 })
+    //             }
+    //         })
+    //         .catch(err => console.log(err))
+    // }
     const login = async (data) => {
         setUser(data);
         navigate("organizer/my_events");
