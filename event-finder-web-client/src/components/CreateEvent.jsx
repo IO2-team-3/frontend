@@ -64,7 +64,7 @@ const CreateEvent = () => {
         var placeSchemaVal = base64;
 
         setLoading(true);
-
+        
         var categoriesTable = formValues.categories.split(",");
         for (var i = 0; i < categoriesTable.length; ++i) {
             categoriesTable[i] = categoriesTable[i].trim();
@@ -84,6 +84,7 @@ const CreateEvent = () => {
                 categoriesPromises.push(fetch(url, {
                     method: 'POST',
                     headers: {
+                        'accept':'*/*',
                         'sessionToken': token,
                         'categoryName': categoriesTable[i],
                     },
@@ -113,6 +114,7 @@ const CreateEvent = () => {
                 fetch(url, {
                     method: 'POST',
                     headers: {
+                      'accept':'*/*',
                         'sessionToken': token,
                         'Content-Type': 'application/json'
                     },

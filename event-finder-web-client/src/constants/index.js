@@ -9,6 +9,9 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { faRectangleXmark } from "@fortawesome/free-solid-svg-icons";
 
 export const appName = "EventWave";
+export const API1 = "http://io2central-env.eba-vfjwqcev.eu-north-1.elasticbeanstalk.com";
+export const API2 = "https://dionizos-backend-app.azurewebsites.net"
+export const API3 = "https://biletmajster.azurewebsites.net"
 
 export const navLinks = [
   {
@@ -47,7 +50,7 @@ export const authNavLinks = [
 ];
 
 export const api = {
-    base: "http://io2central-env.eba-vfjwqcev.eu-north-1.elasticbeanstalk.com"
+    base: API1
 }
 
 export const slides = [
