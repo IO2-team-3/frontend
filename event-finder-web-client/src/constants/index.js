@@ -215,3 +215,6 @@ export const geoCoordinatesValues = [
     max: 180 
   }
 ]
+
+export const numberOfReservationsError = "More places booked than all. This may result in the need to decline several bookings."
+

@@ -8,7 +8,8 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
-import {api, geoCoordinatesValues} from "../constants";
+import { api } from "../constants";
+import { validate, toBase64, checkEventDataCorrectness,checkDataCompletion, validateAll } from "../constants/functions";
 
 const CreateEvent = () => {
 
@@ -27,62 +28,31 @@ const CreateEvent = () => {
     const [toggle, setToggle] = useState(false);
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
+    const [base64, setBase64] = useState("");
 
     const handleChange = (e) => {
         e.preventDefault()
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
-        validate(name, value);
+        if (name == 'placeSchema') {
+            var file = document.querySelector('#placeSchema').files[0];
+            toBase64(file)
+                .then(base64 => {
+                    setBase64(base64)
+                })
+        }
+        validate(name, value, setFormErrors, formErrors, formValues, false);
     };
-
-    const validate = (name, value) =>{
-
-        if(value === "" && name != "placeSchema") setFormErrors({ ...formErrors, [name]: `This field is required!` });
-        else setFormErrors({ ...formErrors, [name]: "" });
-
-        if(name === "startTime"){
-            var startDate = new Date(value);
-            var endDate = new Date(formValues.endTime);
-            if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The start of event should be earlier than the end!" });
-            else if (value != "") setFormErrors({ ...formErrors, [name]: "", ["endTime"]: "" });
-        }
-        if(name === "endTime"){
-            var startDate = new Date(formValues.startTime);
-            var endDate = new Date(value);
-            if(startDate > endDate) setFormErrors({ ...formErrors, [name]: "The end of event should be later than the beginning!" });
-            else if (value != "") setFormErrors({ ...formErrors, [name]: "",  ["startTime"]: "" });
-        }
-        if(name === "placeSchema"){
-            var format = value.split('.').pop();
-            if(format != 'jpg' && format != 'png' && format != 'gif' && format != ''){
-                setFormErrors({ ...formErrors, [name]: "Incorrect file format! Should be .jpg, .png or .gif." });
-            }else setFormErrors({ ...formErrors, [name]: "",  ["placeSchema"]: "" });
-        }
-
-        geoCoordinatesValues.map((coordinate) => {
-            if(name === coordinate.id){
-                let coordinateValue = Number(value);
-                if(coordinateValue < coordinate.min || coordinateValue > coordinate.max){
-                    setFormErrors({ ...formErrors, [name]: `${coordinate.name} should be greater than ${coordinate.min} and less than ${coordinate.max}`})
-                }
-                else if (value != ""){
-                    setFormErrors({ ...formErrors, [name]: "" });
-                }
-            }
-        })
-
-    }
-
-    const toBase64 = file => new Promise((resolve, reject) => {
-        if(!file) resolve("");
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!checkEventDataCorrectness(formErrors)) return;
+        if (!checkDataCompletion(formValues)) {
+            validateAll(setFormErrors, formErrors, formValues, false);
+            return;
+        }
+
         var titleVal = formValues.title;
         var nameVal = formValues.description;
         var freePlaceVal = formValues.freePlaces;
@@ -91,81 +61,72 @@ const CreateEvent = () => {
         var latitudeVal = formValues.latitude;
         var longitudeVal = formValues.longitude;
         var categoriesVal = [];
-        var file = document.querySelector('#file').files[0];
+        var placeSchemaVal = base64;
 
         setLoading(true);
+        
+        var categoriesTable = formValues.categories.split(",");
+        for (var i = 0; i < categoriesTable.length; ++i) {
+            categoriesTable[i] = categoriesTable[i].trim();
+        }
+        categoriesTable = categoriesTable.filter(e => String(e).trim());
 
-        toBase64(file)
-            .then(base64 => {
-                var placeSchemaVal = base64;
+        const categoriesPromises = [];
+        for (var i = 0; i < categoriesTable.length; ++i) {
+            var found = categories.find((cat) => cat.name === categoriesTable[i]);
+            if (found != undefined) {
+                categoriesVal.push(found.id)
+            } else {
 
-                var categoriesTable = formValues.categories.split(",");
-                for (var i = 0; i < categoriesTable.length; ++i) {
-                    categoriesTable[i] = categoriesTable[i].trim();
-                }
-                categoriesTable = categoriesTable.filter(e => String(e).trim());
+                var url = api.base + '/categories';
+                var token = `${user.sessionToken}`;
 
-                const categoriesPromises = [];
-                for (var i = 0; i < categoriesTable.length; ++i) {
-                    var found = categories.find((cat) => cat.name === categoriesTable[i]);
-                    if (found != undefined) {
-                        categoriesVal.push(found.id)
-                    } else {
+                categoriesPromises.push(fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'accept':'*/*',
+                        'sessionToken': token,
+                        'categoryName': categoriesTable[i],
+                    },
+                }))
+            }
+        }
 
-                        var url = api.base + `/categories?categoryName=${categoriesTable[i]}`;
-                        var token = `${user.sessionToken}`;
+        Promise.all(categoriesPromises)
+            .then((responses) =>
+                Promise.all(responses.map(response => response.json())))
+            .then((newCategories) => {
+                newCategories.forEach((c) => categoriesVal.push(c.id))
 
-                        categoriesPromises.push(fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'accept':'*/*',
-                                'sessionToken': token,
-                                'categoryName': categoriesTable[i]
-                            },
-                        }))
-                    }
-                }
-
-                Promise.all(categoriesPromises)
-                    .then((responses) =>
-                        Promise.all(responses.map(response => response.json())))
-                    .then((newCategories) => {
-                        newCategories.forEach((c) => categoriesVal.push(c.id))
-
-                        var url = api.base + '/events';
-                        var token = `${user.sessionToken}`;
-                        var bodyData = JSON.stringify({
-                            title: titleVal,
-                            name: nameVal,
-                            startTime: startTimeVal,
-                            endTime: endTimeVal,
-                            latitude: latitudeVal,
-                            longitude: longitudeVal,
-                            placeSchema: placeSchemaVal,
-                            maxPlace: freePlaceVal,
-                            categoriesIds: categoriesVal
-                        })
-                        fetch(url, {
-                            method: 'POST',
-                            headers: {
-                                'accept':'*/*',
-                                'sessionToken': token,
-                                'Content-Type': 'application/json'
-                            },
-                            body: bodyData
-                        })
-                            .then((response) => response.json())
-                            .then(() => {
-                                //setToggle(false);
-                                //setFormValues(initialValues)
-                                //setLoading(false)
-                                window.location.reload()
-                            })
-                            .catch(error => console.log(error));
-                    }
-                    )
-            })
-
+                var url = api.base + '/events';
+                var token = `${user.sessionToken}`;
+                var bodyData = JSON.stringify({
+                    title: titleVal,
+                    name: nameVal,
+                    startTime: startTimeVal,
+                    endTime: endTimeVal,
+                    latitude: latitudeVal,
+                    longitude: longitudeVal,
+                    placeSchema: placeSchemaVal,
+                    maxPlace: freePlaceVal,
+                    categoriesIds: categoriesVal
+                })
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                      'accept':'*/*',
+                        'sessionToken': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: bodyData
+                })
+                    .then((response) => response.json())
+                    .then(() => {
+                        window.location.reload()
+                    })
+                    .catch(error => console.log(error));
+            }
+            )
     }
 
     const [categories, setCategories] = useState([]);
@@ -182,7 +143,7 @@ const CreateEvent = () => {
 
     return (
         <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-15`}>
-            <form id="form" className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`}
+            <form id="form" className={`bg-black-gradient p-8 md:w-8/12 w-11/12 rounded-3xl font-poppins ${!toggle ? "hover-effect cursor-pointer" : ""}`}
                 onClick={() => {if(!toggle) setToggle(!toggle)}}>
 
                 <div className={`${toggle ? "none" : "hidden"}`}>
@@ -203,6 +164,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"} mt-10`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
+                            id="title"
                             name="title"
                             type="text"
                             placeholder="Enter your event title . . ."
@@ -223,6 +185,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
+                            id="startTime"
                             name="startTime"
                             type="datetime-local"
                             placeholder="Start time"
@@ -243,6 +206,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
+                            id="endTime"
                             name="endTime"
                             type="datetime-local"
                             placeholder="End time"
@@ -265,6 +229,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input
+                            id="categories"
                             name="categories"
                             type="text"
                             list="categoriesList"
@@ -287,6 +252,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <textarea
+                            id="description"
                             name="description" 
                             type="text"
                             placeholder="Briefly describe your event . . ."
@@ -294,6 +260,7 @@ const CreateEvent = () => {
                             maxLength="300"
                             value={formValues.description}
                             onChange={handleChange}
+                            required
                         >
                         </textarea>
                         <label className="relative text-sm placeholder-textarea rounded-full py-0 bg-black px-3">
@@ -307,6 +274,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
+                            id="freePlaces"
                             name="freePlaces"
                             type="number"
                             placeholder="Number of free places . . ."
@@ -328,6 +296,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
+                            id="placeSchema"
                             name="placeSchema"
                             type="file"
                             placeholder="Provide places scheme . . ."
@@ -335,7 +304,6 @@ const CreateEvent = () => {
                             value={formValues.placeSchema}
                             onChange={handleChange}
                             accept="image/*"
-                            id="file"
                         >
                         </input>
                         <label className="relative text-sm placeholder-fileinput rounded-full py-0 bg-black px-3">
@@ -349,6 +317,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
+                            id="latitude"
                             name="latitude"
                             type="number"
                             placeholder="Enter the latitude of the event location e.g. 20.5000"
@@ -372,6 +341,7 @@ const CreateEvent = () => {
                 <div className={`${toggle ? "none" : "hidden"}`}>
                     <div className="md:w-7/12 w-3/4 mx-auto py-5">
                         <input 
+                            id="longitude"
                             name="longitude"
                             type="number"
                             placeholder="Enter the longitude of the event location e.g. 20.5000"

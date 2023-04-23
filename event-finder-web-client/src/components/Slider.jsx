@@ -42,7 +42,7 @@ const Slider = () => {
       >
         
         {slides.map((slide) => (
-          <div className="rounded">
+          <div key={slide.id} className="rounded">
            <SwiperSlide key={slide.id} className="bg-black-gradient swiper-slide">
                 <div className="flex justify-center my-9 lg:p-3">
                     <img className="slide-photo h-auto max-w-full" src={slide.photo} alt="slide_image" />

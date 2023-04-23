@@ -52,7 +52,7 @@ const Events = () => {
 
   return (
     <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-6`}>
-      <div className={`bg-black-gradient p-8 w-9/12 rounded-3xl font-poppins items-center 
+      <div className={`bg-black-gradient p-8 md:w-8/12 w-11/12 rounded-3xl font-poppins items-center 
         ${!toggle ? "hover-effect cursor-pointer" : ""}`}
         onClick={() => { if (!toggle) setToggle(!toggle) }}>
 
@@ -69,13 +69,13 @@ const Events = () => {
           </span>
         </div>
 
-        <div className={`${!toggle ? "hidden" : ""} space-y-10 p-8 items-center`}>
+        <div className={`${!toggle ? "hidden" : ""} space-y-10 md:p-8 p-1 items-center`}>
           {
             loading
                 ?
                 <div className="mx-auto w-16 h-16 border-l-4 border-b-4 border-white-900 rounded-full animate-spin" />
                 :
-                events.map((event) => <EventComponent event = {event} eventToggle={eventToggle}
+                events.map((event) => <EventComponent key={event.id} event = {event} eventToggle={eventToggle}
                                                      setEventToggle={setEventToggle} token={token}
                                                      refresh={refresh} setRefresh={setRefresh}/>)}
         </div>
