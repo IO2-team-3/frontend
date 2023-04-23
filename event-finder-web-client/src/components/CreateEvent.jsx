@@ -118,7 +118,9 @@ const CreateEvent = () => {
                         categoriesPromises.push(fetch(url, {
                             method: 'POST',
                             headers: {
+                                'accept':'*/*',
                                 'sessionToken': token,
+                                'categoryName': categoriesTable[i]
                             },
                         }))
                     }
@@ -146,6 +148,7 @@ const CreateEvent = () => {
                         fetch(url, {
                             method: 'POST',
                             headers: {
+                                'accept':'*/*',
                                 'sessionToken': token,
                                 'Content-Type': 'application/json'
                             },

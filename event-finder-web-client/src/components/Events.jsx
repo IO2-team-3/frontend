@@ -32,7 +32,7 @@ const Events = () => {
     })
         .then((response) =>
         {
-          if(response.status===500) logout();
+          if(response.status===403) logout();
           return response.json()
         })
         .then((responseJson) => {
