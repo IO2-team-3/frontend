@@ -69,7 +69,6 @@ const LogForm = () => {
             if(response.ok){
                  let json = response.json();
                  json.then((value) => {
-                    console.log(value);
                     login(value)
                 })
             }
