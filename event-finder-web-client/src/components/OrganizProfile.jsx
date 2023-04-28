@@ -2,7 +2,7 @@ import {api} from "../constants/index.js";
 import {useAuth} from "../hooks/useAuth.jsx";
 import React, {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faUser, faUserPen} from "@fortawesome/free-solid-svg-icons";
+import {faArrowLeft, faEye, faEyeSlash, faUser, faUserPen} from "@fortawesome/free-solid-svg-icons";
 import DeleteAccount from "./DeleteAccount.jsx";
 
 const OrganizProfile = () => {
@@ -16,6 +16,7 @@ const OrganizProfile = () => {
     const [edit,SetEdit] = useState(false);
     const [loading,SetLoading] = useState(false);
     const [saving,SetSaving] = useState(false);
+    const [toggle,SetToggle] = useState(false);
 
     const loadData = () => {
         SetLoading(true)
@@ -40,11 +41,20 @@ const OrganizProfile = () => {
             .catch(err => console.log(err))
     }
 
+    const validatePassword = () => {
+        if(pass.length >= 7){
+            return true;
+        }
+        else return false;
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if(name === '' || pass === ''){
             return;
         }
+
+        if(!validatePassword()) return;
         SetSaving(true);
 
         fetch(api.base + `/organizer/${id}`, {
@@ -92,11 +102,18 @@ const OrganizProfile = () => {
                                onChange={(e)=>SetName(e.target.value)}
                                 required/>
                         <p className="text-xl"> New password:</p>
-                        <input className="w-full text-lg bg-white-transparent border border-cyan-500 rounded p-2 text-white"
-                               type="password"
-                               value={pass}
-                               onChange={(e)=>SetPass(e.target.value)}
-                                required/>
+                        <div className="relative h-12">
+                            <input className="w-full text-lg bg-white-transparent border border-cyan-500 rounded p-2 text-white absolute right-0"
+                                   type={toggle?"text":"password"}
+                                   value={pass}
+                                   onChange={(e)=>SetPass(e.target.value)}
+                                   required/>
+                            <FontAwesomeIcon
+                                icon={toggle?faEye:faEyeSlash}
+                                className="text-gray-200/70 cursor-pointer text-lg absolute right-4 bottom-4"
+                                onClick={() => SetToggle(!toggle)}>
+                            </FontAwesomeIcon>
+                        </div>
                         <button className="w-full text-center bg-black-gradient p-3 rounded-3xl font-poppins cursor-pointer hover-effect"
                                 type="submit">
                             {saving ? "Saving" : "Save" }
