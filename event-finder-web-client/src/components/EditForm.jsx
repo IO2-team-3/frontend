@@ -134,7 +134,6 @@ const EditForm = () => {
             if (cat.id != id) newCategories.push(cat);
         })
         setCheckedCategories(newCategories)
-        console.log(newCategories)
     }
 
     const handleSubmit = (e) => {
@@ -172,7 +171,7 @@ const EditForm = () => {
             maxPlace: maxPlaceVal,
             categoriesIds: categoriesVal
         })
-        console.log(bodyData)
+        
         fetch(url, {
             method: 'PATCH',
             headers: {
@@ -182,7 +181,9 @@ const EditForm = () => {
             },
             body: bodyData
             })
-            .then(() => window.location.reload())
+            .then(() => {
+                window.location.reload()
+            })
             .catch(error => console.log(error));
     }
 
@@ -465,10 +466,10 @@ const EditForm = () => {
                     </div>
 
 
-                    <div className="mx-auto w-full mb-12">
-                        <div>
+                    <div className="mb-12">
+                        <div className={`${styles.flexCenter} flex-row flex-wrap w-full`}>
                             {checkedCategories.map((c) => (
-                                <span key={c.id} className="px-5 bg-gray-400 rounded-xl mx-3 inline-block my-2">
+                                <span key={c.id} className="px-5 bg-gray-400 rounded-xl my-3 mx-3">
                                     {c.name}<FontAwesomeIcon icon={faXmark} className="text-black cursor-pointer hover:text-red-500 pl-2"
                                         onClick={function () { removeCategory(c.id) }}></FontAwesomeIcon>
                                 </span>
