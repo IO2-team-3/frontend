@@ -107,7 +107,7 @@ const CreateEvent = () => {
                     endTime: endTimeVal,
                     latitude: latitudeVal,
                     longitude: longitudeVal,
-                    placeSchema: placeSchemaVal,
+                    placeSchema: placeSchemaVal === "" ? "NULL" : placeSchemaVal,
                     maxPlace: freePlaceVal,
                     categoriesIds: categoriesVal
                 })
@@ -115,8 +115,8 @@ const CreateEvent = () => {
                     method: 'POST',
                     headers: {
                       'accept':'*/*',
-                        'sessionToken': token,
-                        'Content-Type': 'application/json'
+                      'sessionToken': token,
+                      'Content-Type': 'application/json'
                     },
                     body: bodyData
                 })
@@ -128,7 +128,10 @@ const CreateEvent = () => {
                     .then(() => {
                         window.location.reload()
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => {
+                        console.log(error)
+                        window.location.reload()
+                    })
             }
             )
     }

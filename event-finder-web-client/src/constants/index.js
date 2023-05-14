@@ -218,3 +218,25 @@ export const geoCoordinatesValues = [
 
 export const numberOfReservationsError = "More places booked than all. This may result in the need to decline several bookings."
 
+export const displayStatuses = [
+  { 
+    id: 'all',
+    name: 'All', 
+  },
+  { 
+    id: 'inFuture',
+    name: 'In future', 
+  },
+  { 
+    id: 'pending',
+    name: 'Pending', 
+  },
+  { 
+    id: 'done',
+    name: 'Done', 
+  },
+  { 
+    id: 'cancelled',
+    name: 'Cancelled', 
+  }
+]

@@ -54,8 +54,8 @@ const EditForm = () => {
                     ['description']: responseJson.name,
                     ['maxPlaces']: responseJson.maxPlace,
                     ['freePlace']: responseJson.freePlace,
-                    ['startTime']: new Date(event.startTime * 1000).toISOString().substring(0, 16),
-                    ['endTime']: new Date(event.endTime * 1000).toISOString().substring(0, 16),
+                    ['startTime']: new Date(responseJson.startTime * 1000).toISOString().substring(0, 16),
+                    ['endTime']: new Date(responseJson.endTime * 1000).toISOString().substring(0, 16),
                     ['latitude']: responseJson.latitude,
                     ['longitude']: responseJson.longitude,
                     ['status']: responseJson.status,
@@ -80,6 +80,7 @@ const EditForm = () => {
     const handleChange = (e) => {
         e.preventDefault()
         const { name, value } = e.target;
+        
         if (name == 'maxPlaces') {
             var freePlace = value - occupied;
             setFormValues({ ...formValues, [name]: value, ['freePlace']: freePlace > 0 ? freePlace : 0 });
@@ -99,7 +100,7 @@ const EditForm = () => {
     const addCategory = () => {
         var categoriesTable = formValues.categories.split(",");
         for (var i = 0; i < categoriesTable.length; ++i) {
-            categoriesTable[i] = categoriesTable[i].trim();
+            categoriesTable[i] = categoriesTable[i].trim().toLowerCase();
         }
         categoriesTable = categoriesTable.filter(e => String(e).trim());
 
@@ -146,7 +147,6 @@ const EditForm = () => {
             if (cat.id != id) newCategories.push(cat);
         })
         setCheckedCategories(newCategories)
-        console.log(newCategories)
     }
 
     const handleSubmit = (e) => {
@@ -180,7 +180,7 @@ const EditForm = () => {
             endTime: endTimeVal,
             latitude: latitudeVal,
             longitude: longitudeVal,
-            placeSchema: placeSchemaVal,
+            placeSchema: placeSchemaVal === "" ? "NULL" : placeSchemaVal,
             maxPlace: maxPlaceVal,
             categoriesIds: categoriesVal
         })
@@ -426,7 +426,7 @@ const EditForm = () => {
                     </div>
 
                     <div className="mt-10">
-                        {eventDetails != null && eventDetails.placeSchema != "" ?
+                        {eventDetails != null && eventDetails.placeSchema != "NULL" ?
                             <img alt="Place schema" className="mx-auto" src={eventDetails.placeSchema}></img>
                             :
                             <div className="text-center text-white">
@@ -481,10 +481,10 @@ const EditForm = () => {
                     </div>
 
 
-                    <div className="mx-auto w-full mb-12">
-                        <div>
+                    <div className="mb-12">
+                        <div className={`${styles.flexCenter} flex-row flex-wrap w-full`}>
                             {checkedCategories.map((c) => (
-                                <span key={c.id} className="px-5 bg-gray-400 rounded-xl mx-3 inline-block my-2">
+                                <span key={c.id} className="px-5 bg-gray-400 rounded-xl my-3 mx-3">
                                     {c.name}<FontAwesomeIcon icon={faXmark} className="text-black cursor-pointer hover:text-red-500 pl-2"
                                         onClick={function () { removeCategory(c.id) }}></FontAwesomeIcon>
                                 </span>
