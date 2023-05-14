@@ -27,7 +27,7 @@ const CreateEvent = () => {
     const [formErrors, setFormErrors] = useState(initialErrors);
     const [toggle, setToggle] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [base64, setBase64] = useState("");
 
     const handleChange = (e) => {
@@ -120,7 +120,11 @@ const CreateEvent = () => {
                     },
                     body: bodyData
                 })
-                    .then((response) => response.json())
+                    .then((response) =>
+                    {
+                        if(response.status===403) logout();
+                        return response.json()
+                    })
                     .then(() => {
                         window.location.reload()
                     })
@@ -138,7 +142,11 @@ const CreateEvent = () => {
         fetch(url, {
             method: 'GET',
         })
-        .then((response) => response.json())
+        .then((response) =>
+        {
+            if(response.status===403) logout();
+            return response.json()
+        })
         .then((responseJson) => {
             setCategories(responseJson)
         }).catch(error => console.log(error));

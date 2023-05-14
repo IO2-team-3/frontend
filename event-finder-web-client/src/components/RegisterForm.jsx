@@ -1,16 +1,19 @@
 import React, {useEffect, useState} from "react";
 import "../style.css";
 import {api} from "../constants/index.js";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 const RegisterForm = ({SetSuccess,SetId}) => {
     const [invalid,SetInvalid] = useState(false);
     const [isLoading,SetLoading] = useState(false);
     const [invalidName,SetInvalidName] = useState(false);
     const [invalidEmail,SetInvalidEmail] = useState(0);
-    const [invalidPass,SetInvalidPass] = useState(false);
+    const [invalidPass,SetInvalidPass] = useState(0);
 
     const [name,SetName] = useState("");
     const [email,SetEmail] = useState("");
     const [password,SetPassword] = useState("");
+    const [toggle,SetToggle] = useState(false);
 
     useEffect(() => {
         if(invalid) {
@@ -25,7 +28,7 @@ const RegisterForm = ({SetSuccess,SetId}) => {
         if(invalid) {
             if (email === "") {
                 SetInvalidEmail(1)
-            } else if (!validateEmail(email)) {
+            } else if (!validateEmail()) {
                 SetInvalidEmail(2)
             } else SetInvalidEmail(0)
         }
@@ -34,8 +37,10 @@ const RegisterForm = ({SetSuccess,SetId}) => {
     useEffect(() => {
         if(invalid) {
             if (password === "") {
-                SetInvalidPass(true)
-            } else SetInvalidPass(false)
+                SetInvalidPass(1)
+            } else if (!validatePassword()) {
+                SetInvalidPass(2)
+            } else SetInvalidPass(0)
         }
     },[invalid,password])
 
@@ -47,9 +52,16 @@ const RegisterForm = ({SetSuccess,SetId}) => {
         else return false;
     }
 
+    const validatePassword = () => {
+        if(password.length >= 7){
+            return true;
+        }
+        else return false;
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(password === "" || !validateEmail(email) || name === "") {
+        if(password === "" || !validateEmail(email) || !validatePassword() || name === "") {
             SetInvalid(true);
             return false;
         }
@@ -102,15 +114,24 @@ const RegisterForm = ({SetSuccess,SetId}) => {
                     className="form-control form-input p-3 rounded-3xl md:w-7/12 w-3/4"/>
                 <div className="message-reg" hidden = {!(invalidEmail===1)}>Please enter valid email</div>
                 <div className="message-reg" hidden  = {!(invalidEmail===2)}>Please enter email</div>
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => SetPassword(e.target.value)}
-                    style={invalidPass?{outlineColor:"red"}:{}}
-                    className="form-control form-input p-3 rounded-3xl md:w-7/12 w-3/4"
-                />
-                <div className="message-reg" hidden = {!invalidPass}>Please enter password</div>
+                <div className="relative h-12">
+                    <input
+                        id="password"
+                        placeholder="Password"
+                        type={toggle?"text":"password"}
+                        value={password}
+                        onChange={(e) => SetPassword(e.target.value)}
+                        className="form-control form-input p-3 rounded-3xl absolute right-0"
+                        style={invalidPass!=0?{outlineColor:"red"}:{}}
+                    />
+                    <FontAwesomeIcon
+                        icon={toggle?faEye:faEyeSlash}
+                        className="text-gray-200/70 cursor-pointer text-lg absolute right-4 bottom-4"
+                        onClick={() => SetToggle(!toggle)}>
+                    </FontAwesomeIcon>
+                </div>
+                <div className="message" hidden = {!(invalidPass===2)}>Please enter minimum 8 characters</div>
+                <div className="message-reg" hidden = {!(invalidPass===1)}>Please enter password</div>
                 {
                     isLoading
                         ?

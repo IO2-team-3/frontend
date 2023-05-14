@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import "../style.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
+import {faEye, faEyeSlash, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../hooks/useAuth.jsx";
 import {api} from "../constants/index.js";
 
@@ -12,19 +12,22 @@ const LogForm = () => {
 
     const [invalid,SetInvalid] = useState(false)
     const [invalidEmail,SetInvalidEmail] = useState(0);
-    const [invalidPass,SetInvalidPass] = useState(false);
+    const [invalidPass,SetInvalidPass] = useState(0);
 
     const [email,SetEmail] = useState("");
     const [password,SetPassword] = useState("");
+    const [toggle,SetToggle] = useState(false);
 
     const { user,login } = useAuth();
 
     useEffect(() => {
         if(invalid){
             if(password === ""){
-                SetInvalidPass(true)
+                SetInvalidPass(1)
+            }else if (!validatePassword()) {
+                SetInvalidPass(2)
             }
-            else SetInvalidPass(false)
+            else SetInvalidPass(0)
         }
 
     },[invalid,password])
@@ -33,13 +36,13 @@ const LogForm = () => {
         if(invalid) {
             if (email === "") {
                 SetInvalidEmail(1)
-            } else if (!validateEmail(email)) {
+            } else if (!validateEmail()) {
                 SetInvalidEmail(2)
             } else SetInvalidEmail(0)
         }
     },[invalid,email])
 
-    const validateEmail = (email) => {
+    const validateEmail = () => {
         let emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if(email.match(emailFormat)){
             return true;
@@ -47,9 +50,16 @@ const LogForm = () => {
         else return false;
     }
 
+    const validatePassword = () => {
+        if(password.length >= 7){
+            return true;
+        }
+        else return false;
+    }
+
     const handleClick = async (e) => {
         e.preventDefault();
-        if(password === "" || !validateEmail(email)) {
+        if(password === "" || !validateEmail()) {
             e.preventDefault();
             SetInvalid(true)
             return;
@@ -103,7 +113,7 @@ const LogForm = () => {
                     <input
                         id="email"
                         type="text"
-                        className="form-control form-input p-3 rounded-3xl md:w-7/12 w-3/4"
+                        className="form-control form-input p-3 rounded-3xl"
                         value={email}
                         onChange={(e) => SetEmail(e.target.value)}
                         style={invalidEmail!==0?{outlineColor:"red"}:{}}
@@ -111,15 +121,23 @@ const LogForm = () => {
                     <div className="message" hidden = {!(invalidEmail===2)}>Please enter valid email</div>
                     <div className="message" hidden  = {!(invalidEmail===1)}>Please enter email</div>
                     <label htmlFor="password" className="form-control">Password</label>
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => SetPassword(e.target.value)}
-                        className="form-control form-input p-3 rounded-3xl md:w-7/12 w-3/4"
-                        style={invalidPass?{outlineColor:"red"}:{}}
-                    />
-                    <div className="message" hidden={!invalidPass}>Please enter password</div>
+                    <div className="relative h-12">
+                        <input
+                            id="password"
+                            type={toggle?"text":"password"}
+                            value={password}
+                            onChange={(e) => SetPassword(e.target.value)}
+                            className="form-control form-input p-3 rounded-3xl absolute right-0"
+                            style={invalidPass!=0?{outlineColor:"red"}:{}}
+                        />
+                        <FontAwesomeIcon
+                            icon={toggle?faEye:faEyeSlash}
+                            className="text-gray-200/70 cursor-pointer text-lg absolute right-4 bottom-4"
+                            onClick={() => SetToggle(!toggle)}>
+                        </FontAwesomeIcon>
+                    </div>
+                    <div className="message" hidden = {!(invalidPass===2)}>Please enter minimum 8 characters</div>
+                    <div className="message" hidden={!(invalidPass===1)}>Please enter password</div>
 
                     {
                         isLoading

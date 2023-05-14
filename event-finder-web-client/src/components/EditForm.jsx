@@ -28,7 +28,7 @@ const EditForm = () => {
     const [formErrors, setFormErrors] = useState(initialErrors);
     const [checkedCategories, setCheckedCategories] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [occupied, setOccupied] = useState(0)
     const [base64, setBase64] = useState("");
 
@@ -41,7 +41,11 @@ const EditForm = () => {
         fetch(event_url, {
             method: 'GET',
         })
-            .then((response) => response.json())
+            .then((response) =>
+            {
+                if(response.status===403) logout();
+                return response.json()
+            })
             .then((responseJson) => {
                 setEventDetails(responseJson)
                 setOccupied(responseJson.maxPlace - responseJson.freePlace);
@@ -63,7 +67,11 @@ const EditForm = () => {
         fetch(cat_url, {
             method: 'GET',
         })
-            .then((response) => response.json())
+            .then((response) =>
+            {
+                if(response.status===403) logout();
+                return response.json()
+            })
             .then((responseJson) => {
                 setCategories(responseJson)
             }).catch(error => console.log(error));
@@ -122,7 +130,11 @@ const EditForm = () => {
 
         Promise.all(categoriesPromises)
             .then((responses) =>
-                Promise.all(responses.map(response => response.json())))
+                Promise.all(responses.map(response =>
+                {
+                    if(response.status===403) logout();
+                    return response.json()
+                })))
             .then((newCategories) => {
                 setCheckedCategories(checkedCategories => [...checkedCategories, ...newCategories, ...founds])
             })
@@ -182,7 +194,9 @@ const EditForm = () => {
             },
             body: bodyData
             })
-            .then(() => {
+            .then((response) =>
+            {
+                if(response.status===403) logout();
                 window.location.reload()
             })
             .catch(error => console.log(error));
