@@ -197,7 +197,7 @@ const EditForm = () => {
             .then((response) =>
             {
                 if(response.status===403) logout();
-                //window.location.reload()
+                window.location.reload()
             })
             .catch(error => console.log(error));
     }
