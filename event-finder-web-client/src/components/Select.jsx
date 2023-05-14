@@ -1,5 +1,5 @@
 
-const Select = ({color,text,checked}) => {
+const Select = ({color,text,checkedVal}) => {
     return(
         <div className="inline-flex items-center">
             <label
@@ -10,7 +10,7 @@ const Select = ({color,text,checked}) => {
                     id={color}
                     name="color"
                     type="radio"
-                    checked={checked}
+                    checked={checkedVal}
                     className={`before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full
                     border border-blue-gray-200 text-${color}-500 transition-all before:absolute before:top-2/4
                     before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4
