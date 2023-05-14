@@ -50,8 +50,8 @@ const EditForm = () => {
                     ['description']: responseJson.name,
                     ['maxPlaces']: responseJson.maxPlace,
                     ['freePlace']: responseJson.freePlace,
-                    ['startTime']: new Date(event.startTime * 1000).toISOString().substring(0, 16),
-                    ['endTime']: new Date(event.endTime * 1000).toISOString().substring(0, 16),
+                    ['startTime']: new Date(responseJson.startTime * 1000).toISOString().substring(0, 16),
+                    ['endTime']: new Date(responseJson.endTime * 1000).toISOString().substring(0, 16),
                     ['latitude']: responseJson.latitude,
                     ['longitude']: responseJson.longitude,
                     ['status']: responseJson.status,
@@ -72,6 +72,7 @@ const EditForm = () => {
     const handleChange = (e) => {
         e.preventDefault()
         const { name, value } = e.target;
+        
         if (name == 'maxPlaces') {
             var freePlace = value - occupied;
             setFormValues({ ...formValues, [name]: value, ['freePlace']: freePlace > 0 ? freePlace : 0 });
@@ -107,7 +108,7 @@ const EditForm = () => {
 
                 var url = api.base + `/categories`;
                 var token = `${user.sessionToken}`;
-                console.log(categoriesTable[i])
+                
                 categoriesPromises.push(fetch(url, {
                     method: 'POST',
                     headers: {
@@ -171,7 +172,7 @@ const EditForm = () => {
             maxPlace: maxPlaceVal,
             categoriesIds: categoriesVal
         })
-        
+        console.log(bodyData)
         fetch(url, {
             method: 'PATCH',
             headers: {
