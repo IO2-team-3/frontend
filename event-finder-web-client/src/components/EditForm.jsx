@@ -167,7 +167,7 @@ const EditForm = () => {
             endTime: endTimeVal,
             latitude: latitudeVal,
             longitude: longitudeVal,
-            placeSchema: placeSchemaVal,
+            placeSchema: placeSchemaVal === "" ? "NULL" : placeSchemaVal,
             maxPlace: maxPlaceVal,
             categoriesIds: categoriesVal
         })
@@ -411,7 +411,7 @@ const EditForm = () => {
                     </div>
 
                     <div className="mt-10">
-                        {eventDetails != null && eventDetails.placeSchema != "" ?
+                        {eventDetails != null && eventDetails.placeSchema != "NULL" ?
                             <img alt="Place schema" className="mx-auto" src={eventDetails.placeSchema}></img>
                             :
                             <div className="text-center text-white">
