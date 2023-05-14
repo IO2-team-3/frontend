@@ -91,7 +91,7 @@ const EditForm = () => {
     const addCategory = () => {
         var categoriesTable = formValues.categories.split(",");
         for (var i = 0; i < categoriesTable.length; ++i) {
-            categoriesTable[i] = categoriesTable[i].trim();
+            categoriesTable[i] = categoriesTable[i].trim().toLowerCase();
         }
         categoriesTable = categoriesTable.filter(e => String(e).trim());
 
@@ -107,7 +107,7 @@ const EditForm = () => {
 
                 var url = api.base + `/categories`;
                 var token = `${user.sessionToken}`;
-                
+                console.log(categoriesTable[i])
                 categoriesPromises.push(fetch(url, {
                     method: 'POST',
                     headers: {
