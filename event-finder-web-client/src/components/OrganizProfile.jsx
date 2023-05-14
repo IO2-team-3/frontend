@@ -6,7 +6,7 @@ import {faArrowLeft, faEye, faEyeSlash, faUser, faUserPen} from "@fortawesome/fr
 import DeleteAccount from "./DeleteAccount.jsx";
 
 const OrganizProfile = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     let token = `${user.sessionToken}`
 
     const [id,SetId] = useState(0);
@@ -17,6 +17,7 @@ const OrganizProfile = () => {
     const [loading,SetLoading] = useState(false);
     const [saving,SetSaving] = useState(false);
     const [toggle,SetToggle] = useState(false);
+    const [invalid,SetInvalid] = useState(true);
 
     const loadData = () => {
         SetLoading(true)
@@ -27,9 +28,7 @@ const OrganizProfile = () => {
                 'sessionToken': token,
             }
         }).then(response => {
-            if(response.status === 500){
-
-            }
+            if(response.status===403) logout();
             return response.json()
         })
             .then(json => {
@@ -43,11 +42,19 @@ const OrganizProfile = () => {
 
     const validatePassword = () => {
         if(pass.length >= 7){
+            SetInvalid(false)
             return true;
         }
-        else return false;
+        else {
+            SetInvalid(true);
+            return false;
+        }
     }
 
+    const handleChange = (e) => {
+        SetPass(e.target.value)
+        validatePassword()
+    }
     const handleSubmit = (e) => {
         e.preventDefault();
         if(name === '' || pass === ''){
@@ -70,6 +77,7 @@ const OrganizProfile = () => {
             })
         })
             .then(result => {
+                if(result.status===403) logout();
                 if(result.ok) window.location.reload()
             })
             .catch(err => console.log(err))
@@ -102,11 +110,11 @@ const OrganizProfile = () => {
                                onChange={(e)=>SetName(e.target.value)}
                                 required/>
                         <p className="text-xl"> New password:</p>
-                        <div className="relative h-12">
+                        <div className="relative" style={{height: "45px"}}>
                             <input className="w-full text-lg bg-white-transparent border border-cyan-500 rounded p-2 text-white absolute right-0"
                                    type={toggle?"text":"password"}
                                    value={pass}
-                                   onChange={(e)=>SetPass(e.target.value)}
+                                   onChange={handleChange}
                                    required/>
                             <FontAwesomeIcon
                                 icon={toggle?faEye:faEyeSlash}
@@ -114,8 +122,10 @@ const OrganizProfile = () => {
                                 onClick={() => SetToggle(!toggle)}>
                             </FontAwesomeIcon>
                         </div>
-                        <button className="w-full text-center bg-black-gradient p-3 rounded-3xl font-poppins cursor-pointer hover-effect"
-                                type="submit">
+                        <button className={`w-full text-center ${invalid?'bg-gray-600/30 text-gray-100/40':'bg-black-gradient hover-effect cursor-pointer'} p-3 rounded-3xl font-poppins`}
+                                type="submit"
+                                disabled={invalid}
+                                onChange={handleChange}>
                             {saving ? "Saving" : "Save" }
                         </button>
                     </div>

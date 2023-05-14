@@ -59,7 +59,7 @@ const LogForm = () => {
 
     const handleClick = async (e) => {
         e.preventDefault();
-        if(password === "" || !validateEmail() || !validatePassword()) {
+        if(password === "" || !validateEmail()) {
             e.preventDefault();
             SetInvalid(true)
             return;

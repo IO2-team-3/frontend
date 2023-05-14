@@ -2,7 +2,6 @@ import React from "react";
 import styles from "../style";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth.jsx";
-import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'

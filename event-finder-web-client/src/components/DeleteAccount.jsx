@@ -12,27 +12,12 @@ const DeleteAccount = ({id}) => {
   const [toggle, setToggle] = useState(false);
   const {user, logout} = useAuth();
 
-  // useEffect(() => {
-  //   let url = "http://localhost:8080/organizer";
-  //   let token = `${user.sessionToken}`
-  //   fetch(url, {
-  //     method: 'GET',
-  //     headers: {
-  //       'sessionToken': token,
-  //     }
-  //   })
-  //     .then((response) => response.json())
-  //     .then((responseJson) => {
-  //       setOrganizer(responseJson)
-  //     }).catch(error => console.log(error));
-  // }, [])
-
   return (
     <div
         className="w-full font-poppins"
     >
       {!toggle ?
-        <div className="text-center bg-black-gradient p-3 rounded-3xl cursor-pointer hover-effect mt-10 sm:mt-0"
+        <div className="text-center bg-black-gradient p-3 rounded-3xl cursor-pointer hover-effect"
           onClick={() => { if (!toggle) setToggle(!toggle) }}>
           <FontAwesomeIcon icon={faTrash} className="text-white"></FontAwesomeIcon> Delete account
         </div> : null}
@@ -54,7 +39,11 @@ const DeleteAccount = ({id}) => {
                           'sessionToken': token,
                         }
                       })
-                          .then((response) => response.json())
+                          .then((response) =>
+                          {
+                            if(response.status===403) logout();
+                            return response.json()
+                          })
                           .then((responseJson) => {
                             console.log(responseJson)
                           }).catch(error => console.log(error));
