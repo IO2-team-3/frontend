@@ -31,6 +31,7 @@ const EditForm = () => {
     const { user, logout } = useAuth();
     const [occupied, setOccupied] = useState(0)
     const [base64, setBase64] = useState("");
+    const [photos, setPhotos] = useState([]);
 
     // get actual data
     const [eventDetails, setEventDetails] = useState(initialValues);
@@ -147,6 +148,22 @@ const EditForm = () => {
             if (cat.id != id) newCategories.push(cat);
         })
         setCheckedCategories(newCategories)
+    }
+
+    const addPhoto = (e) => {
+        const value = e.target.files[0];
+        const url = URL.createObjectURL(value);
+        setPhotos([...photos, {id: value.name, value: value, url: url}])
+        console.log(photos)
+        e.target.value = "";
+    }
+
+    const removePhoto = (id) => {
+        var newPhotos = [];
+        photos.forEach(photo => {
+            if (photo.id != id) newPhotos.push(photo);
+        })
+        setPhotos(newPhotos)
     }
 
     const handleSubmit = (e) => {
@@ -488,6 +505,39 @@ const EditForm = () => {
                                     {c.name}<FontAwesomeIcon icon={faXmark} className="text-black cursor-pointer hover:text-red-500 pl-2"
                                         onClick={function () { removeCategory(c.id) }}></FontAwesomeIcon>
                                 </span>
+                            ))}
+                        </div>
+                    </div>
+
+
+                    <div className="md:mx-8 md:mx-0">
+                        <div className="w-full mx-auto py-5">
+                            <input
+                                id="photos"
+                                name="photos"
+                                type="file"
+                                className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                                onChange={addPhoto}
+                                accept="image/*"
+                            >
+                            </input>
+                            <label className="relative text-sm placeholder-fileinput rounded-full py-0 bg-black px-3">
+                                Event photos
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div className="mb-12">
+                        <div className={`${styles.flexCenter} flex-row flex-wrap w-full`}>
+                            {photos.map((photo) => (
+                                <div key={photo.id} className="md:w-2/5 w-full p-2 md:hover:w-3/5 to-show-parent">
+                                    <div className="text-white cursor-pointer hover:text-red-500 relative delete-photo-mark float-right 
+                                    to-show text-xl" onClick={function () { removePhoto(photo.id) }}>
+                                        <FontAwesomeIcon icon={faXmark}></FontAwesomeIcon>
+                                    </div>
+                                    <img src={photo.url} alt={photo.id}></img>
+                                </div>
                             ))}
                         </div>
                     </div>

@@ -320,3 +320,15 @@ textarea:focus + .placeholder-textarea {
   border: 2px solid lightseagreen;
 }
 
+.to-show {
+  display: none;
+}
+
+.to-show-parent:hover .to-show {
+  display: block;
+}
+
+.delete-photo-mark{
+  top: 25px;
+  right: 5px;
+}

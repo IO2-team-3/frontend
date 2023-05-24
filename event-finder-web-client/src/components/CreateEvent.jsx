@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/useAuth.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons'
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons'
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleXmark, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { api } from "../constants";
 import { validate, toBase64, checkEventDataCorrectness,checkDataCompletion, validateAll } from "../constants/functions";
@@ -29,6 +29,7 @@ const CreateEvent = () => {
     const [loading, setLoading] = useState(false);
     const { user, logout } = useAuth();
     const [base64, setBase64] = useState("");
+    const [photos, setPhotos] = useState([]);
 
     const handleChange = (e) => {
         e.preventDefault()
@@ -43,6 +44,22 @@ const CreateEvent = () => {
         }
         validate(name, value, setFormErrors, formErrors, formValues, false);
     };
+
+    const addPhoto = (e) => {
+        const value = e.target.files[0];
+        const url = URL.createObjectURL(value);
+        setPhotos([...photos, {id: value.name, value: value, url: url}])
+        console.log(photos)
+        e.target.value = "";
+    }
+
+    const removePhoto = (id) => {
+        var newPhotos = [];
+        photos.forEach(photo => {
+            if (photo.id != id) newPhotos.push(photo);
+        })
+        setPhotos(newPhotos)
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -370,6 +387,39 @@ const CreateEvent = () => {
                         </label>
                         {formErrors.longitude != "" ? 
                         <p className="text-red-400"><FontAwesomeIcon icon={faCircleXmark}/> {formErrors.longitude}</p> : null}
+                    </div>
+                </div>
+
+                <div className={`${toggle ? "none" : "hidden"}`}>
+                    <div className="md:w-7/12 w-3/4 mx-auto py-5">
+                        <input 
+                            id="photos"
+                            name="photos"
+                            type="file"
+                            className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                            onChange={addPhoto}
+                            accept="image/*"
+                        >
+                        </input>
+                        <label className="relative text-sm placeholder-fileinput rounded-full py-0 bg-black px-3">
+                            Event photos
+                        </label>
+                    </div>
+                </div>
+
+                <div className={`${toggle ? " " : "hidden"}`}>
+                    <div className="mb-12">
+                        <div className={`${styles.flexCenter} flex-row flex-wrap w-full`}>
+                            {photos.map((photo) => (
+                                <div key={photo.id} className="md:w-2/5 w-full p-2 md:hover:w-3/5 to-show-parent">
+                                    <div className="text-white cursor-pointer hover:text-red-500 relative delete-photo-mark float-right 
+                                    to-show text-xl" onClick={function () { removePhoto(photo.id) }}>
+                                        <FontAwesomeIcon icon={faXmark}></FontAwesomeIcon>
+                                    </div>
+                                    <img src={photo.url} alt={photo.id}></img>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
