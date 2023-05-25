@@ -48,15 +48,28 @@ const CreateEvent = () => {
     const addPhoto = (e) => {
         const value = e.target.files[0];
         const url = URL.createObjectURL(value);
-        setPhotos([...photos, {id: value.name, value: value, url: url}])
-        console.log(photos)
+        let amount = 0;
+        let filename = value.name.split('.');
+        const regexPattern = new RegExp(`^${filename[0]}\\(\\d+\\)\\.${filename[1]}$`);
+        photos.forEach(photo => {
+            if(photo.id === value.name) amount++;
+            else if(regexPattern.test(photo.id)) {
+                console.log(photo.id)
+                amount++;
+            }
+        })
+        let name = amount === 0 ? value.name : `${filename[0]}(${amount}).${filename[1]}` 
+        setPhotos([...photos, {id: name, value: value, url: url}])
         e.target.value = "";
     }
 
     const removePhoto = (id) => {
+
         var newPhotos = [];
+        var photoToRemove = null;
         photos.forEach(photo => {
             if (photo.id != id) newPhotos.push(photo);
+            else photoToRemove = photo;
         })
         setPhotos(newPhotos)
     }
@@ -142,8 +155,8 @@ const CreateEvent = () => {
                         if(response.status===403) logout();
                         return response.json()
                     })
-                    .then(() => {
-                        window.location.reload()
+                    .then((responseJSON) => {
+                        refresh(api.base, token, responseJSON.id);
                     })
                     .catch(error => {
                         console.log(error)
@@ -151,6 +164,35 @@ const CreateEvent = () => {
                     })
             }
             )
+    }
+
+    const refresh = async (apiBase, token, eventId) => {
+        await postPhotos(apiBase, token, eventId)
+        window.location.reload()
+    }
+
+    const postPhotos = async (apiBase, token, eventId) => {
+        var photoUrl = apiBase + `/events/${eventId}/photos`;
+        for (var i = 0; i < photos.length; ++i) {
+            var photo = photos[i];
+            await fetch(photoUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    'sessionToken': token,
+                    'path': photo.id,
+                },
+            })
+                .then(response => response.text())
+                .then(async (path) =>  {
+                    await fetch(path, {
+                        method: 'PUT',
+                        body: photo.value,
+                    })
+                        .catch(error => console.log(error))
+                })
+        }
     }
 
     const [categories, setCategories] = useState([]);

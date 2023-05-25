@@ -38,6 +38,7 @@ const EditForm = () => {
     const [categories, setCategories] = useState([]);
     var event_url = api.base + `/events/${event.id}`;
     var cat_url = api.base + `/categories`;
+    var photos_url = api.base + `/events/${event.id}/photos`;
     useEffect(() => {
         fetch(event_url, {
             method: 'GET',
@@ -76,6 +77,23 @@ const EditForm = () => {
             .then((responseJson) => {
                 setCategories(responseJson)
             }).catch(error => console.log(error));
+
+        fetch(photos_url, {
+            method: 'GET',
+        })
+            .then((response) => {
+                if (response.status === 403) logout();
+                return response.json()
+            })
+            .then((responseJson) => {
+                let photosDb = []
+                responseJson.forEach(element => {
+                    let name = element.split('/').pop() 
+                    photosDb.push({id: name, value: element, url: element, new: false})
+                });
+                setPhotos(photosDb)
+            }).catch(error => console.log(error));
+
     }, [])
 
     const handleChange = (e) => {
@@ -153,17 +171,49 @@ const EditForm = () => {
     const addPhoto = (e) => {
         const value = e.target.files[0];
         const url = URL.createObjectURL(value);
-        setPhotos([...photos, {id: value.name, value: value, url: url}])
-        console.log(photos)
+        let amount = 0;
+        let filename = value.name.split('.');
+        const regexPattern = new RegExp(`^${filename[0]}\\(\\d+\\)\\.${filename[1]}$`);
+        photos.forEach(photo => {
+            if(photo.id === value.name) amount++;
+            else if(regexPattern.test(photo.id)) {
+                console.log(photo.id)
+                amount++;
+            }
+        })
+        let name = amount === 0 ? value.name : `${filename[0]}(${amount}).${filename[1]}` 
+        setPhotos([...photos, {id: name, value: value, url: url, new: true}])
         e.target.value = "";
     }
 
     const removePhoto = (id) => {
+
         var newPhotos = [];
+        var photoToRemove = null;
         photos.forEach(photo => {
             if (photo.id != id) newPhotos.push(photo);
+            else photoToRemove = photo;
         })
         setPhotos(newPhotos)
+
+        if(!photoToRemove.new){
+        var url = api.base + `/events/${event.id}/photos`; 
+        var token = `${user.sessionToken}`; 
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Accept': '*/*',
+                'Content-Type': 'application/json',
+                'sessionToken': token,
+                'path': id
+            },
+            })
+            .then((response) =>
+            {
+                if(response.status===403) logout();
+            })
+            .catch(error => console.log(error));
+        }
     }
 
     const handleSubmit = (e) => {
@@ -201,7 +251,7 @@ const EditForm = () => {
             maxPlace: maxPlaceVal,
             categoriesIds: categoriesVal
         })
-        console.log(bodyData)
+        
         fetch(url, {
             method: 'PATCH',
             headers: {
@@ -214,10 +264,43 @@ const EditForm = () => {
             .then((response) =>
             {
                 if(response.status===403) logout();
-                window.location.reload()
+                refresh(api.base, token);
             })
             .catch(error => console.log(error));
     }
+
+    const refresh = async (apiBase, token) => {
+        await postPhotos(apiBase, token)
+        window.location.reload()
+    }
+
+    const postPhotos = async (apiBase, token) => {
+        var photoUrl = apiBase + `/events/${event.id}/photos`;
+
+        for (var i = 0; i < photos.length; ++i) {
+            if (!photos[i].new) continue;
+
+            var photo = photos[i];
+            await fetch(photoUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    'sessionToken': token,
+                    'path': photo.id,
+                },
+            })
+                .then(response => response.text())
+                .then(async (path) =>  {
+                    await fetch(path, {
+                        method: 'PUT',
+                        body: photo.value,
+                    })
+                        .catch(error => console.log(error))
+                })
+        }
+    }
+
 
     return (
         <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-6`}>
