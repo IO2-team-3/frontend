@@ -1,7 +1,8 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 import { mainPageAnimationText } from '../constants';
 
-// Have to change <a href = "./register"/> to Link 
+
 const GetStarted = () =>{
 
     return (
@@ -15,12 +16,12 @@ const GetStarted = () =>{
                 </div>
             </div>
             <div className="float-right lg:my-6 my-20 p-10">
-                <a>
+                <Link to='/log_in'>
                     <div className="link-effect text-lg md:text-3xl font-bold cursor-pointer border-2 border-solid p-3 rounded-lg 
                         uppercase shadow-md shadow-slate-100">
                         Get started
                     </div>
-                </a>
+                </Link>
             </div>
         </div>
     )

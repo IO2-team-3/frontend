@@ -13,6 +13,8 @@ export const API1 = "http://io2central-env.eba-vfjwqcev.eu-north-1.elasticbeanst
 export const API2 = "https://dionizos-backend-app.azurewebsites.net"
 export const API3 = "https://biletmajster.azurewebsites.net"
 
+export const APIS3 = "https://io2-central-photos.s3.amazonaws.com"
+
 export const navLinks = [
   {
     id: "home",

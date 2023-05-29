@@ -31,12 +31,14 @@ const EditForm = () => {
     const { user, logout } = useAuth();
     const [occupied, setOccupied] = useState(0)
     const [base64, setBase64] = useState("");
+    const [photos, setPhotos] = useState([]);
 
     // get actual data
     const [eventDetails, setEventDetails] = useState(initialValues);
     const [categories, setCategories] = useState([]);
     var event_url = api.base + `/events/${event.id}`;
     var cat_url = api.base + `/categories`;
+    var photos_url = api.base + `/events/${event.id}/photos`;
     useEffect(() => {
         fetch(event_url, {
             method: 'GET',
@@ -75,6 +77,23 @@ const EditForm = () => {
             .then((responseJson) => {
                 setCategories(responseJson)
             }).catch(error => console.log(error));
+
+        fetch(photos_url, {
+            method: 'GET',
+        })
+            .then((response) => {
+                if (response.status === 403) logout();
+                return response.json()
+            })
+            .then((responseJson) => {
+                let photosDb = []
+                responseJson.forEach(element => {
+                    let name = element.split('/').pop() 
+                    photosDb.push({id: name, value: element, url: element, new: false})
+                });
+                setPhotos(photosDb)
+            }).catch(error => console.log(error));
+
     }, [])
 
     const handleChange = (e) => {
@@ -149,6 +168,54 @@ const EditForm = () => {
         setCheckedCategories(newCategories)
     }
 
+    const addPhoto = (e) => {
+        const value = e.target.files[0];
+        const url = URL.createObjectURL(value);
+        let amount = 0;
+        let filename = value.name.split('.');
+        const regexPattern = new RegExp(`^${filename[0]}\\(\\d+\\)\\.${filename[1]}$`);
+        photos.forEach(photo => {
+            if(photo.id === value.name) amount++;
+            else if(regexPattern.test(photo.id)) {
+                console.log(photo.id)
+                amount++;
+            }
+        })
+        let name = amount === 0 ? value.name : `${filename[0]}(${amount}).${filename[1]}` 
+        setPhotos([...photos, {id: name, value: value, url: url, new: true}])
+        e.target.value = "";
+    }
+
+    const removePhoto = (id) => {
+
+        var newPhotos = [];
+        var photoToRemove = null;
+        photos.forEach(photo => {
+            if (photo.id != id) newPhotos.push(photo);
+            else photoToRemove = photo;
+        })
+        setPhotos(newPhotos)
+
+        if(!photoToRemove.new){
+        var url = api.base + `/events/${event.id}/photos`; 
+        var token = `${user.sessionToken}`; 
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Accept': '*/*',
+                'Content-Type': 'application/json',
+                'sessionToken': token,
+                'path': id
+            },
+            })
+            .then((response) =>
+            {
+                if(response.status===403) logout();
+            })
+            .catch(error => console.log(error));
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -184,7 +251,7 @@ const EditForm = () => {
             maxPlace: maxPlaceVal,
             categoriesIds: categoriesVal
         })
-        console.log(bodyData)
+        
         fetch(url, {
             method: 'PATCH',
             headers: {
@@ -197,10 +264,43 @@ const EditForm = () => {
             .then((response) =>
             {
                 if(response.status===403) logout();
-                window.location.reload()
+                refresh(api.base, token);
             })
             .catch(error => console.log(error));
     }
+
+    const refresh = async (apiBase, token) => {
+        await postPhotos(apiBase, token)
+        window.location.reload()
+    }
+
+    const postPhotos = async (apiBase, token) => {
+        var photoUrl = apiBase + `/events/${event.id}/photos`;
+
+        for (var i = 0; i < photos.length; ++i) {
+            if (!photos[i].new) continue;
+
+            var photo = photos[i];
+            await fetch(photoUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    'sessionToken': token,
+                    'path': photo.id,
+                },
+            })
+                .then(response => response.text())
+                .then(async (path) =>  {
+                    await fetch(path, {
+                        method: 'PUT',
+                        body: photo.value,
+                    })
+                        .catch(error => console.log(error))
+                })
+        }
+    }
+
 
     return (
         <section className={`${styles.flexCenter} flex-row flex-wrap space-x-20 my-6`}>
@@ -488,6 +588,39 @@ const EditForm = () => {
                                     {c.name}<FontAwesomeIcon icon={faXmark} className="text-black cursor-pointer hover:text-red-500 pl-2"
                                         onClick={function () { removeCategory(c.id) }}></FontAwesomeIcon>
                                 </span>
+                            ))}
+                        </div>
+                    </div>
+
+
+                    <div className="md:mx-8 md:mx-0">
+                        <div className="w-full mx-auto py-5">
+                            <input
+                                id="photos"
+                                name="photos"
+                                type="file"
+                                className="text-white p-4 m-1 rounded-3xl w-full input-text-effect form-input input-border"
+                                onChange={addPhoto}
+                                accept="image/*"
+                            >
+                            </input>
+                            <label className="relative text-sm placeholder-fileinput rounded-full py-0 bg-black px-3">
+                                Event photos
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div className="mb-12">
+                        <div className={`${styles.flexCenter} flex-row flex-wrap w-full`}>
+                            {photos.map((photo) => (
+                                <div key={photo.id} className="md:w-2/5 w-full p-2 md:hover:w-3/5 to-show-parent">
+                                    <div className="text-white cursor-pointer hover:text-red-500 relative delete-photo-mark float-right 
+                                    to-show text-xl" onClick={function () { removePhoto(photo.id) }}>
+                                        <FontAwesomeIcon icon={faXmark}></FontAwesomeIcon>
+                                    </div>
+                                    <img src={photo.url} alt={photo.id}></img>
+                                </div>
                             ))}
                         </div>
                     </div>
